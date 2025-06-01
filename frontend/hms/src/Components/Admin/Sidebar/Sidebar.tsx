@@ -301,62 +301,57 @@ const Sidebar = ({
           },
           {
               name: "Doctor Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/doctors",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "Emloyee Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/employees",
               icon: <IconUsers className="text-orange-500" stroke={2}/>,
           },
           {
               name: "User Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/users",
               icon: <IconUser className="text-orange-500" stroke={2}/>,
           },
           {
-              name: "Department Master",
-              url: "/admin/doctors",
-              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
-          },
-          {
               name: "OT Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/ots",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "Ward Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/wards",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "Room Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/rooms",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "Bed Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/beds",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "Nursing Station",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/nursing",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "Service Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/services",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "Tariff Master",
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/tarrifs",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "Company Master",//Vendor and Suppliyer
-              url: "/admin/doctors",
+              url: "/admin/mastersettings/companies",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
       ]
