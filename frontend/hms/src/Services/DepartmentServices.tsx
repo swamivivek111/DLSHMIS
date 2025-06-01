@@ -1,48 +1,41 @@
-/*import axiosInstance from "../Interceptor/AxiosInterceptor";
+import axiosInstance from "../Interceptor/AxiosInterceptor";
 
-const registerUser=async(user:any)=>{
-    return axiosInstance.post('/user/register', user)
-    .then((response:any) => response.data) // logs: It worked!
-    .catch((error:any) => {throw error;}); // runs if reject()
-};
-const loginUser=async(user:any)=>{
-    return axiosInstance.post('/user/login', user)
-    .then((response:any) => response.data) // logs: It worked!
-    .catch((error:any) => {throw error;}); // runs if reject()
-};
-
-export {registerUser, loginUser};*/
-
-import { Department } from "../Components/Types/Department";
-
-let fakeDb: Department[] = [];
-
-export const getDepartments = async (page = 1, limit = 10, search = '') => {
-  const filtered = fakeDb.filter(d => d.name.toLowerCase().includes(search.toLowerCase()));
-  const paginated = filtered.slice((page - 1) * limit, page * limit);
-  return {
-    data: paginated,
-    totalPages: Math.ceil(filtered.length / limit),
-  };
+export const getDepartment = async (page: number = 1, limit: number = 10, search: string = '') => {
+  try {
+    page=page-1;
+    const response = await axiosInstance.get('/master/department/getall', {
+      params: { page, limit, search }
+    });
+    return {
+      data: response.data.departments,       // adjust based on your backend response
+      totalPages: response.data.totalPages,  // or use totalCount / limit depending on your API
+    };
+  } catch (error: any) {
+    throw error;
+  }
 };
 
-export const getDepartmentById = async (id: number): Promise<Department> => {
-  const found = fakeDb.find(d => d.id === id);
-  if (!found) throw new Error('Not found');
-  return found;
+
+export const addDepartment=async(department:any)=>{
+  return axiosInstance.post('/master/department/add', department)
+  .then((response:any) => response.data) // logs: It worked!
+  .catch((error:any) => {throw error;}); // runs if reject()
 };
 
-export const createDepartment = async (dept: Omit<Department, 'id'>) => {
-  const newDept = { ...dept, id: Date.now() };
-  fakeDb.push(newDept);
-  return newDept;
+export const updateDepartment=async(id:any, department:any)=>{
+  return axiosInstance.put('/master/department/update/'+id, department)
+  .then((response:any) => response.data) // logs: It worked!
+  .catch((error:any) => {throw error;}); // runs if reject()
 };
 
-export const updateDepartment = async (id: number, dept: Partial<Department>) => {
-  const index = fakeDb.findIndex(d => d.id === id);
-  if (index >= 0) fakeDb[index] = { ...fakeDb[index], ...dept };
+export const getDepartmentById=async(id: number)=>{
+  return axiosInstance.get('/master/department/get/'+id)
+  .then((response:any) => response.data) // logs: It worked!
+  .catch((error:any) => {throw error;}); // runs if reject()
 };
 
-export const deleteDepartment = async (id: number) => {
-  fakeDb = fakeDb.filter(d => d.id !== id);
+export const deleteDepartment=async(id: number)=>{
+  return axiosInstance.delete('/master/department/delete/'+id)
+  .then((response:any) => response.data) // logs: It worked!
+  .catch((error:any) => {throw error;}); // runs if reject()
 };

@@ -1,4 +1,5 @@
 export interface Department {
+    active: any;
     id: number;
     name: string;
     code: string;

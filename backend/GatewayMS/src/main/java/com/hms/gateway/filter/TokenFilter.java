@@ -1,12 +1,8 @@
 package com.hms.gateway.filter;
 
-import java.io.ObjectInputFilter.Config;
-
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;

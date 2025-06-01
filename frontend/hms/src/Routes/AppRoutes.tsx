@@ -14,9 +14,9 @@ import RegisterAdmin from '../Pages/RegisterAdmin';
 import Dashboard from '../Components/Dashboard';
 import ManageAppointment from '../Components/Appointment/ManageAppointment';
 import AddAppointment from '../Components/Appointment/AddAppointment';
-import Departments from '../Components/Masters/Department/Departments';
-import DepartmentFormPage from '../Components/Masters/Department/DepartmentFormPage';
-import DepartmentViewPage from '../Components/Masters/Department/DepartmentViewPage';
+import DepartmentForm from '../Components/Masters/Department/DepartmentForm';
+import DepartmentGrid from '../Components/Masters/Department/DepartmentGrid';
+import DepartmentView from '../Components/Masters/Department/DepartmentView';
 
 const AppRoutes = () => {
   return (
@@ -46,10 +46,10 @@ const AppRoutes = () => {
                 <Route path='appointments/addappointment' element={<AddAppointment/>} />
                 <Route path='appointments/addappointment/:id' element={<AddAppointment/>} />
                     {/* Department Routes */}
-                    <Route path="mastersettings/departments" element={<Departments />} />
-                    <Route path="mastersettings/departments/add" element={<DepartmentFormPage />} />
-                    <Route path="mastersettings/departments/edit/:id" element={<DepartmentFormPage />} />
-                    <Route path="mastersettings/departments/view/:id" element={<DepartmentViewPage />} />
+                    <Route path="mastersettings/departments" element={<DepartmentGrid />} />
+                    <Route path="mastersettings/departments/add" element={<DepartmentForm />} />
+                    <Route path="mastersettings/departments/edit/:id" element={<DepartmentForm />} />
+                    <Route path="mastersettings/departments/view/:id" element={<DepartmentView />} />
                     {/* Add routes for other modules like users here */}
             </Route>
             

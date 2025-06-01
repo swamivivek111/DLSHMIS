@@ -8,7 +8,7 @@ export default function ExportButton() {
   };
 
   return (
-    <Button variant="outline" className="flex items-center gap-2" onClick={handleExport}>
+    <Button variant="outline" className="flex items-center gap-2 bg-[#202A44] text-white hover:bg-[#1a2236]" onClick={handleExport}>
       <IconDownload size={16} />
       Export
     </Button>

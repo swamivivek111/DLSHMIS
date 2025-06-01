@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Department } from '../../Types/Department';
 import DataTable from '../../DataTable/DataTable';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
-import { deleteDepartment, getDepartments } from '../../../Services/DepartmentServices';
+import { deleteDepartment, getDepartment } from '../../../Services/DepartmentServices';
 
-export default function DepartmentsPage() {
+const PAGE_SIZE = 10;
+
+export default function DepartmentGrid() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -14,7 +16,7 @@ export default function DepartmentsPage() {
 
   const fetchData = async () => {
     try {
-      const res = await getDepartments(page, 10, search);
+      const res = await getDepartment(page, PAGE_SIZE, search);
       setDepartments(res.data);
       setTotalPages(res.totalPages);
     } catch {
@@ -38,9 +40,9 @@ export default function DepartmentsPage() {
       onView={(d) => navigate(`/admin/mastersettings/departments/view/${d.id}`)}
       onEdit={(d) => navigate(`/admin/mastersettings/departments/edit/${d.id}`)}
       onDelete={async (d) => {
-        if (confirm('Delete department?')) {
+        if (confirm('Delete '+d.name+' department?')) {
           await deleteDepartment(d.id);
-          successNotification('Deleted');
+          successNotification(d.name+' department deleted successfully!');
           fetchData();
         }
       }}

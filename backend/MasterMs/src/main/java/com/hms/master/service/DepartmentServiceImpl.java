@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.hms.master.dto.DepartmentDTO;
@@ -51,6 +53,7 @@ public class DepartmentServiceImpl implements DepartmentService{
     public DepartmentDTO updateDepartment(Long id, DepartmentDTO departmentDTO) throws HMSException {
         Department existingDepartment = departmentRepository.findById(id).orElseThrow(() -> new HMSException("DEPARTMENT_NOT_FOUND"));
             existingDepartment.setName(departmentDTO.getName());
+            existingDepartment.setCode(departmentDTO.getCode());
             existingDepartment.setDescription(departmentDTO.getDescription());
             existingDepartment.setHeadOfDepartment(departmentDTO.getHeadOfDepartment());
             existingDepartment.setContactNumber(departmentDTO.getContactNumber());
@@ -67,6 +70,14 @@ public class DepartmentServiceImpl implements DepartmentService{
             throw new HMSException("DEPARTMENT_NOT_FOUND");
         }
         departmentRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Department> findAll(String search, Pageable pageable) {
+        if (search == null || search.isBlank()) {
+            return departmentRepository.findAll(pageable);
+        }
+        return departmentRepository.findByNameContainingIgnoreCase(search, pageable);
     }
 
    

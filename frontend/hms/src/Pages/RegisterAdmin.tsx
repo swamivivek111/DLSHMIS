@@ -40,7 +40,7 @@ const RegisterAdmin = () => {
         setLoading(true);
         //console.log(values);
         registerUser(values).then((data)=>{
-          successNotification(data.meassage);
+          successNotification(data.message);
           navigate('/login');
           //console.log("handleSubmit : "+data.response.data);
         }).catch((error)=>{

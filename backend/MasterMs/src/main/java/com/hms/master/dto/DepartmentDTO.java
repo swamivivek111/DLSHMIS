@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class DepartmentDTO {
     private Long id;
     private String name;
+    private String code;
     private String description;
     private String headOfDepartment;
     private String contactNumber;
@@ -26,7 +27,7 @@ public class DepartmentDTO {
     private LocalDateTime updatedAt;
 
     public Department toEntity(){
-        return new Department(id, name, description, headOfDepartment, contactNumber, email, hospitalId,active, createdAt, updatedAt);
+        return new Department(id, name, code, description, headOfDepartment, contactNumber, email, hospitalId,active, createdAt, updatedAt);
     }
     
     @PrePersist

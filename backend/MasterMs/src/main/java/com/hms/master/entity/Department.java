@@ -22,6 +22,7 @@ public class Department {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String code;
     private String description;
     private String headOfDepartment;
     private String contactNumber;
@@ -32,6 +33,6 @@ public class Department {
     private LocalDateTime updatedAt;
 
     public DepartmentDTO toDTO(){
-        return new DepartmentDTO(id, name, description, headOfDepartment, contactNumber, email, hospitalId,active, createdAt, updatedAt);
+        return new DepartmentDTO(id, name, code, description, headOfDepartment, contactNumber, email, hospitalId,active, createdAt, updatedAt);
     }
 }

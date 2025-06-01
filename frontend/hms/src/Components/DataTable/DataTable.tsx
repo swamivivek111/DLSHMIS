@@ -49,15 +49,17 @@ export default function DataTable<T>({
       <Table striped highlightOnHover withColumnBorders withRowBorders style={{ border: '1px solid #ccc' }}>
         <TableThead>
           <tr className="border-b">
+            <th style={{ border: '1px solid #202A44' }}>Sr. No</th>
             {columns.map(col => (
-              <th key={col.key.toString()}>{col.label}</th>
+              <th key={col.key.toString()} style={{ border: '1px solid #202A44' }}>{col.label}</th>
             ))}
-            <th>Actions</th>
+            <th style={{ border: '1px solid #202A44' }}>Actions</th>
           </tr>
         </TableThead>
         <tbody>
           {data.map((row, i) => (
             <tr key={i} className="border-b">
+              <td className="border-r px-2 py-1">{(pagination.page - 1) * 10 + i + 1}</td> {/* Sr. No */}
               {columns.map(col => (
                 <td key={col.key.toString()} className="border-r px-2 py-1">
                   {col.render ? col.render(row) : (row[col.key] as any)}
