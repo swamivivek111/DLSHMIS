@@ -45,6 +45,7 @@ public class DepartmentServiceImpl implements DepartmentService{
     @Override
     public Long createDepartment(DepartmentDTO departmentDTO) {
         Department department = departmentDTO.toEntity();
+        department.setCreatedAt(LocalDateTime.now());
         department = departmentRepository.save(department);
         return department.toDTO().getId();
     }
@@ -60,6 +61,7 @@ public class DepartmentServiceImpl implements DepartmentService{
             existingDepartment.setEmail(departmentDTO.getEmail());
             existingDepartment.setHospitalId(departmentDTO.getHospitalId());
             existingDepartment.setActive(departmentDTO.getActive());
+            existingDepartment.setUpdatedAt(LocalDateTime.now());
         Department updatedDepartment = departmentRepository.save(existingDepartment);
         return updatedDepartment.toDTO();
     }

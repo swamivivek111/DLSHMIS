@@ -305,9 +305,9 @@ const Sidebar = ({
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
-              name: "Emloyee Master",
+              name: "Employee Master",
               url: "/admin/mastersettings/employees",
-              icon: <IconUsers className="text-orange-500" stroke={2}/>,
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
           {
               name: "User Master",
@@ -354,6 +354,53 @@ const Sidebar = ({
               url: "/admin/mastersettings/companies",
               icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
           },
+          {
+              name: "Country Master",
+              url: "/admin/mastersettings/countrys",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+          {
+              name: "State Master",
+              url: "/admin/mastersettings/states",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+          {
+              name: "Taluka Master",
+              url: "/admin/mastersettings/talukas",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+           {
+              name: "City Master",
+              url: "/admin/mastersettings/citys",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+          {
+              name: "Title Master",
+              url: "/admin/mastersettings/titles",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+          {
+              name: "Blood Group Master",
+              url: "/admin/mastersettings/bloodgroups",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+          {
+              name: "Designation Master",
+              url: "/admin/mastersettings/designations",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+          {
+              name: "District Master",
+              url: "/admin/mastersettings/districts",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+          {
+              name: "User Profile Role Master",
+              url: "/admin/mastersettings/userprofileroles",
+              icon: <IconStethoscope className="text-orange-500" stroke={2}/>,
+          },
+          
+
       ]
     },
   ];

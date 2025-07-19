@@ -23,11 +23,12 @@ public class DepartmentDTO {
     private String email;
     private Long hospitalId;
     private Boolean active;
+    private String type;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public Department toEntity(){
-        return new Department(id, name, code, description, headOfDepartment, contactNumber, email, hospitalId,active, createdAt, updatedAt);
+        return new Department(id, name, code, description, headOfDepartment, contactNumber, email, hospitalId, active, type, createdAt, updatedAt);
     }
     
     @PrePersist

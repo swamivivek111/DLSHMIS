@@ -29,10 +29,11 @@ public class Department {
     private String email;
     private Long hospitalId;
     private Boolean active;
+    private String type;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public DepartmentDTO toDTO(){
-        return new DepartmentDTO(id, name, code, description, headOfDepartment, contactNumber, email, hospitalId,active, createdAt, updatedAt);
+        return new DepartmentDTO(id, name, code, description, headOfDepartment, contactNumber, email, hospitalId, active, type, createdAt, updatedAt);
     }
 }
