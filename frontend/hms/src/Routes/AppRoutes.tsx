@@ -50,6 +50,8 @@ import EmployeeView from '../Components/Masters/Employee/EmployeeView';
 import UserProfileRoleGrid from '../Components/Masters/UserProfileRole/UserProfileRoleGrid';
 import UserProfileRoleForm from '../Components/Masters/UserProfileRole/UserProfileRoleForm';
 import UserProfileRoleView from '../Components/Masters/UserProfileRole/UserProfileRoleView';
+import BookAppointment from '../Components/Appointment/BookAppointment';
+import DoctorScheduleManager from '../Components/Appointment/DoctorScheduleManager';
 
 
 const AppRoutes = () => {
@@ -77,7 +79,9 @@ const AppRoutes = () => {
                 <Route path='pharmacy' element={<Random/>} />
                 <Route path='mastersettings' element={<Random/>} />
                 <Route path='appointments/list' element={<ManageAppointment/>} />
+                <Route path='appointments/schedule' element={<DoctorScheduleManager/>} />
                 <Route path='appointments/addappointment' element={<AddAppointment/>} />
+                <Route path='appointments/bookappointment' element={<BookAppointment/>} />
                 <Route path='appointments/addappointment/:id' element={<AddAppointment/>} />
                     {/* Department Routes */}
                     <Route path="mastersettings/departments" element={<DepartmentGrid />} />

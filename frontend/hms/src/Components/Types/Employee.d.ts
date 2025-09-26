@@ -21,7 +21,7 @@
       pincode: String;
       country: String;
       remark: Boolean;
-      createdBy:  String;
+    createdBy:  String;
     updatedBy:  String;
     createdAt:  LocalDateTime;
     updatedAt:  LocalDateTime; 

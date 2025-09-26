@@ -12,7 +12,7 @@ export const getEmployee = async (page: number = 1, limit: number = 10, search: 
     };
   } catch (error: any) {
     throw error;
-  } 
+  }
 };
 
 

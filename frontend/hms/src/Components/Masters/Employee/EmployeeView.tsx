@@ -41,13 +41,13 @@ export default function EmployeeView() {
 
           <Grid gutter="sm" className="text-sm">
             <Grid.Col span={{ base: 12, sm: 6 }}>
-              <Text className="bg-blue-50 px-2 py-1 rounded">
-                <strong>Name:</strong> {employee.firstName}
+                <Text className="bg-blue-50 px-2 py-1 rounded">
+                <strong>Employee Id:</strong> {employee.employeeId}
               </Text>
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <Text className="bg-blue-50 px-2 py-1 rounded">
-                <strong>Employee Id:</strong> {employee.employeeId}
+                <strong>Name:</strong> {employee.firstName}
               </Text>
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>

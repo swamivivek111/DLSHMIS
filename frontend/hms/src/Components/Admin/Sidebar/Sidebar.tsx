@@ -83,6 +83,16 @@ const Sidebar = ({
             icon: <IconBook className="text-orange-500" stroke={2}/>,
           },
           {
+            name: "Book Appointment New",
+            url: "/admin/appointments/bookappointment",
+            icon: <IconBook className="text-orange-500" stroke={2}/>,
+          },
+          {
+            name: "Doctor Schedule New",
+            url: "/admin/appointments/schedule",
+            icon: <IconTransitionRightFilled className="text-orange-500" stroke={2}/>,
+          },
+          {
             name: "Doctor Schedule",
             url: "/admin/dashboard/visit",
             icon: <IconTransitionRightFilled className="text-orange-500" stroke={2}/>,
