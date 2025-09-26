@@ -108,8 +108,19 @@ export default function DoctorGrid() {
         <div className="px-2 py-2">Sr. No</div>
         <div className="px-2 py-2">Doctor</div>
         <div className="px-2 py-2">Code</div>
+        <div className="px-2 py-2">Type</div>
+        <div className="px-2 py-2">Specialization</div>
         <div className="px-2 py-2">Qualification</div>
+        <div className="px-2 py-2">EmailId</div>
         <div className="px-2 py-2">Contact</div>
+        <div className="px-2 py-2">First Consultation Fees</div>
+        <div className="px-2 py-2">FollowUpFees</div>
+        <div className="px-2 py-2">Joining Date</div>
+        <div className="px-2 py-2">PAN No</div>
+        <div className="px-2 py-2">Address</div>
+        <div className="px-2 py-2">City</div>
+        <div className="px-2 py-2">District</div>
+        <div className="px-2 py-2">Doctor Share</div>
         <div className="px-2 py-2">Action</div>
       </div>
 
@@ -129,8 +140,19 @@ export default function DoctorGrid() {
             </div>
             <div className="px-2 py-2">{d.name}</div>
             <div className="px-2 py-2">{d.code}</div>
+            <div className="px-2 py-2">{d.type}</div>
+            <div className="px-2 py-2">{d.specialization}</div>
             <div className="px-2 py-2">{d.qualification}</div>
+            <div className="px-2 py-2">{d.emailId}</div>
             <div className="px-2 py-2">{d.contactNumber}</div>
+            <div className="px-2 py-2">{d.firstConsultationFees}</div>
+            <div className="px-2 py-2">{d.followUpFees}</div>
+            <div className="px-2 py-2">{d.joiningDate}</div>
+            <div className="px-2 py-2">{d.panno}</div>
+            <div className="px-2 py-2">{d.address}</div>
+            <div className="px-2 py-2">{d.city}</div>
+            <div className="px-2 py-2">{d.district}</div>
+            <div className="px-2 py-2">{d.doctorShare}</div>
             <div className="px-2 py-2 flex gap-2 flex-wrap">
               <button
                 onClick={() =>

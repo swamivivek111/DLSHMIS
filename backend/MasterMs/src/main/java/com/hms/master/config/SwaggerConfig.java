@@ -1,4 +1,4 @@
-package com.hms.user.config;
+package com.hms.master.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -13,9 +13,9 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("DLS HMS - User Microservice API")
+                        .title("DLS HMS - Master Microservice API")
                         .version("1.0")
-                        .description("API documentation for the User Microservice in DLS HMS")
+                        .description("API documentation for the Master Microservice in DLS HMS")
                         .contact(new Contact()
                                 .name("DLS HMS Team")
                                 .email("support@dlshms.com")

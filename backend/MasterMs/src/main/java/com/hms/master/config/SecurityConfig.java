@@ -26,18 +26,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173")); // Your React dev URL
+        config.setAllowedOrigins(List.of("http://localhost:5173")); // React dev URL
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of(
-            "Authorization", 
-            "Content-Type", 
-            "Accept", 
-            "X-Requested-With", 
+            "Authorization",
+            "Content-Type",
+            "Accept",
+            "X-Requested-With",
             "X-Secret-Key",
             "Origin"
         ));
         config.setExposedHeaders(List.of("Authorization", "Content-Type"));
-        config.setAllowCredentials(true); // Allow cookies, JWT, etc.
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -47,13 +47,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Inject custom CORS config
-            .csrf().disable()
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Preflight
+                // Allow preflight requests
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // Allow Swagger endpoints without auth
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/swagger-resources/**",
+                    "/webjars/**"
+                ).permitAll()
+
+                // Custom header bypass (if needed)
                 .requestMatchers(request -> "SECRET".equals(request.getHeader("X-Secret-Key"))).permitAll()
-                .anyRequest().permitAll() // You can lock this down later
-            );
+
+                // Everything else (change to .authenticated() if you want to secure)
+                .anyRequest().permitAll()
+            )
+            .httpBasic();
         return http.build();
     }
 
