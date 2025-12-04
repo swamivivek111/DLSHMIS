@@ -1,0 +1,78 @@
+version: '3.8'
+
+# This file is automatically used by docker-compose for local development
+# It ensures consistent port mapping between Docker and local development
+
+services:
+  # Keep all services on same ports as configured in Gateway
+  userms:
+    ports:
+      - "8081:8081"
+  
+  profilems:
+    ports:
+      - "8082:8082"
+  
+  appointmentms:
+    ports:
+      - "8083:8083"
+  
+  masterms:
+    ports:
+      - "8084:8084"
+  
+  notificationms:
+    ports:
+      - "8085:8085"
+  
+  billingms:
+    ports:
+      - "8086:8086"
+  
+  medicalrecordsms:
+    ports:
+      - "8087:8087"
+  
+  inventoryms:
+    ports:
+      - "8088:8088"
+  
+  labms:
+    ports:
+      - "8089:8089"
+  
+  opdms:
+    ports:
+      - "8090:8090"
+  
+  ipdms:
+    ports:
+      - "8091:8091"
+  
+  radiologyms:
+    ports:
+      - "8092:8092"
+  
+  pharmacyms:
+    ports:
+      - "8093:8093"
+  
+  otms:
+    ports:
+      - "8094:8094"
+  
+  auditms:
+    ports:
+      - "8095:8095"
+  
+  gateway:
+    ports:
+      - "9000:9000"
+  
+  frontend:
+    ports:
+      - "5173:80"
+  
+  mysql:
+    ports:
+      - "3306:3306"

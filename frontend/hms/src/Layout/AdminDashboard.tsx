@@ -23,7 +23,7 @@ const AdminDashboard = () => {
       {/* Main Content Area */}
       <div
         className={`flex flex-col flex-1 transition-all duration-300 ${
-          sidebarOpen ? 'ml-64' : 'ml-0' // Adjusting margin-left based on sidebar state
+          sidebarOpen ? 'ml-64' : 'ml-16' // Show collapsed sidebar (64px) when closed
         }`}
       >
         {/* Header */}

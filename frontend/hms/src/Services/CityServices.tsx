@@ -7,8 +7,8 @@ export const getCity = async (page: number = 1, limit: number = 10, search: stri
       params: { page, limit, search }
     });
     return {
-      data: response.data.citys,       // adjust based on your backend response
-      totalPages: response.data.totalPages,  // or use totalCount / limit depending on your API
+      data: response.data.citys || [],
+      totalPages: response.data.totalPages || 1,
     };
   } catch (error: any) {
     throw error;

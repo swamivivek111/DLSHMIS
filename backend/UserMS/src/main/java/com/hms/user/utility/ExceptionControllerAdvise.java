@@ -26,13 +26,19 @@ public class ExceptionControllerAdvise {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorInfo> exceptionHandler(Exception e){//Excepton handling other than the system module
-        ErrorInfo errorInfo = new ErrorInfo("Some error occuerred!", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
+        ErrorInfo errorInfo = new ErrorInfo();
+        errorInfo.setErrorMessage("Some error occurred!");
+        errorInfo.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorInfo.setTimestamp(LocalDateTime.now());
         return new ResponseEntity<ErrorInfo>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ErrorInfo> userExceptionHandler(UserException e){//Excepton handling for user >> Deligation >> e.getMessage() >> environment >> application.properties
-        ErrorInfo errorInfo = new ErrorInfo(environment.getProperty(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
+        ErrorInfo errorInfo = new ErrorInfo();
+        errorInfo.setErrorMessage(environment.getProperty(e.getMessage()));
+        errorInfo.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorInfo.setTimestamp(LocalDateTime.now());
         return new ResponseEntity<ErrorInfo>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -45,7 +51,10 @@ public class ExceptionControllerAdvise {
             ConstraintViolationException cve=(ConstraintViolationException) e;
             errorMsg=cve.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(","));
         }
-        ErrorInfo errorInfo = new ErrorInfo(errorMsg, HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
+        ErrorInfo errorInfo = new ErrorInfo();
+        errorInfo.setErrorMessage(errorMsg);
+        errorInfo.setErrorCode(HttpStatus.BAD_REQUEST.value());
+        errorInfo.setTimestamp(LocalDateTime.now());
         return new ResponseEntity<ErrorInfo>(errorInfo, HttpStatus.BAD_REQUEST);
     }
 }

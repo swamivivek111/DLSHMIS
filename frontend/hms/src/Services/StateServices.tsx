@@ -2,15 +2,17 @@ import axiosInstance from "../Interceptor/AxiosInterceptor";
 
 export const getState = async (page: number = 1, limit: number = 10, search: string = '') => {
   try {
-    //page=page-1;
+    page = page - 1; // Backend expects 0-based pagination
     const response = await axiosInstance.get('/master/state/getall', {
       params: { page, limit, search }
     });
+    console.log('State API response:', response.data);
     return {
-      data: response.data.states,       // adjust based on your backend response
-      totalPages: response.data.totalPages,  // or use totalCount / limit depending on your API
+      data: response.data.states || [],
+      totalPages: response.data.totalPages || 1,
     };
   } catch (error: any) {
+    console.error('State API error:', error);
     throw error;
   }
 };

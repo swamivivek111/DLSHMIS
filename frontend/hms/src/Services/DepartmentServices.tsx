@@ -39,3 +39,25 @@ export const deleteDepartment=async(id: number)=>{
   .then((response:any) => response.data) // logs: It worked!
   .catch((error:any) => {throw error;}); // runs if reject()
 };
+
+export const getAllDepartments = async () => {
+  try {
+    const response = await axiosInstance.get('/master/department/getall', {
+      params: { page: 0, limit: 1000, search: '' }
+    });
+    console.log('Department API response:', response.data);
+    return response.data.departments || response.data || [];
+  } catch (error: any) {
+    console.error('Failed to load departments:', error);
+    return [];
+  }
+};
+
+export const DepartmentServices = {
+  getAllDepartments,
+  getDepartment,
+  addDepartment,
+  updateDepartment,
+  getDepartmentById,
+  deleteDepartment
+};

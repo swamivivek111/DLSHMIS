@@ -13,5 +13,6 @@ public class ErrorInfo {
     private String errorMessage;
     private Integer errorCode;
     private LocalDateTime timestamp;
-
+    private String path;
+    private String details;
 }

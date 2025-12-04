@@ -2,6 +2,7 @@ import { useForm } from '@mantine/form';
 import { Button, TextInput, Textarea, Container, Title, Switch} from '@mantine/core';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { addTitle, getTitleById, updateTitle } from '../../../Services/TitleServices';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 import { Select } from '@mantine/core';
@@ -102,11 +103,17 @@ export default function TitleForm() {
   });
 
   return (
-    <Container>
-      <Title order={2} mb="md">
-        {isEdit ? 'Edit Title' : 'Add Title'}
-      </Title>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6"
+    >
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          {isEdit ? 'Edit Title' : 'Add Title'}
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <TextInput label="Title Name" {...form.getInputProps('titleName')} />
         <TextInput label="Gender" {...form.getInputProps('gender')} />
         <TextInput label="Created By" {...form.getInputProps('createdBy')} />
@@ -142,6 +149,7 @@ export default function TitleForm() {
           </Button>
         </div>
       </form>
-    </Container>
+      </div>
+    </motion.div>
   );
 }

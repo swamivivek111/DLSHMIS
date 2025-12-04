@@ -12,14 +12,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//SecondDev
-@Data/*setter and getter*/
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class UserProfileRole {
     @Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roleId;
     private String roleName;
     private String description;
@@ -30,7 +29,7 @@ public class UserProfileRole {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public UserProfileRoleDTO toDTO(){
+    public UserProfileRoleDTO toDTO() {
         return new UserProfileRoleDTO(roleId, roleName, description, accessLevel, createdBy, updatedBy, active, createdAt, updatedAt);
     }
 }

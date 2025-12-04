@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DesignationDTO {
     private Long designationId;
+    private Long hospitalId;
     private String designationName;
     private String description;
     private String designationCode;
@@ -25,7 +26,7 @@ public class DesignationDTO {
     private LocalDateTime updatedAt;
 
     public Designation toEntity(){
-        return new Designation(designationId, designationName, description, designationCode, createdBy,
+        return new Designation(designationId, hospitalId, designationName, description, designationCode, createdBy,
         updatedBy, active, createdAt, updatedAt);
     
     }

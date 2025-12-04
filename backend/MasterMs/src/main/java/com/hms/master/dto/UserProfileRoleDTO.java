@@ -2,8 +2,6 @@ package com.hms.master.dto;
 
 import java.time.LocalDateTime;
 
-import com.hms.master.entity.UserProfileRole;
-
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
@@ -24,9 +22,7 @@ public class UserProfileRoleDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public UserProfileRole toEntity(){
-        return new UserProfileRole(roleId, roleName, description, accessLevel, createdBy, updatedBy, active, createdAt, updatedAt);
-    }
+
     
     @PrePersist
     protected void onCreate() {

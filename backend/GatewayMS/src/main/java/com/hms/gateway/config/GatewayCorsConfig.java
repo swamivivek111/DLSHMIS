@@ -14,7 +14,7 @@ public class GatewayCorsConfig {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173")); // frontend dev URL
+        config.setAllowedOriginPatterns(List.of("*")); // Allow all origins temporarily
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of(
             "Authorization", 

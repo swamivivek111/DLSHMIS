@@ -2,7 +2,6 @@ package com.hms.master.dto;
 
 import java.time.LocalDateTime;
 
-import com.hms.master.entity.Doctor;
 import com.hms.master.entity.Employee;
 
 import jakarta.persistence.GeneratedValue;
@@ -37,8 +36,8 @@ public class EmployeeDTO {
     private String cityId;
     private String stateId;
     private String pincode;
-    private String country;
-    private Boolean remark;
+    private String countryId;
+    private String remark;
     private String createdBy;
     private String updatedBy;
     private Boolean active;
@@ -48,7 +47,7 @@ public class EmployeeDTO {
     public Employee toEntity(){
         return new Employee(employeeId, employeeCode, titleId, firstName, middleName, lastName, gender, dob, 
         joiningDate, designationId, departmentId, roleId, qualification, emailId, mobileNo, address, cityId, stateId,
-         pincode, country, remark, createdBy, updatedBy, active, createdAt, updatedAt);
+         pincode, countryId, remark, createdBy, updatedBy, active, createdAt, updatedAt);
     }
     
     @PrePersist

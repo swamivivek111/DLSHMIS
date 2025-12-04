@@ -1,0 +1,29 @@
+export interface Hospital {
+  hospitalId: number;
+  hospitalCode: string;
+  hospitalName: string;
+  hospitalType?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  pincode?: string;
+  phoneNumber?: string;
+  emailId?: string;
+  website?: string;
+  licenseNumber?: string;
+  registrationNumber?: string;
+  totalBeds?: number;
+  icuBeds?: number;
+  emergencyBeds?: number;
+  establishedYear?: string;
+  accreditation?: string;
+  specialties?: string;
+  description?: string;
+  logoUrl?: string;
+  active?: boolean;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

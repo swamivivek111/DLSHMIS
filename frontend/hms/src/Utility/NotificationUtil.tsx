@@ -31,15 +31,21 @@ const errorNotification = (message: string) => {
     icon: <IconX />,
     withCloseButton: true,
     withBorder: true,
+    autoClose: 4000,
     className:
-      '!border-red-300 animate-slide-in cursor-pointer max-w-[90vw] sm:max-w-md text-sm sm:text-base',
+      '!border-red-300 animate-notification cursor-pointer w-[400px] max-w-[90vw] text-sm sm:text-base rounded-lg',
     onClick: () => notifications.hide('error'),
     styles: {
       title: { fontWeight: 600, fontSize: '1rem' },
       description: { whiteSpace: 'pre-line', wordBreak: 'break-word' },
-      
+      root: {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 9999,
+      },
     },
-    position: 'top-right', // Use one of the allowed positions like 'top-right'
   });
 };
 

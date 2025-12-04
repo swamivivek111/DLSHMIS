@@ -2,6 +2,7 @@ import { useForm } from '@mantine/form';
 import { Button, TextInput, Textarea, Container, Title, Switch} from '@mantine/core';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { addState, getStateById, updateState } from '../../../Services/StateServices';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 import { Select } from '@mantine/core';
@@ -14,7 +15,6 @@ export default function StateForm() {
 
   const form = useForm({
     initialValues: {
-      stateId:'',
       countryId: '',
       stateName: '',
       stateCode: '',
@@ -24,6 +24,7 @@ export default function StateForm() {
     validate: {
       stateName: v => (v.length < 2 ? 'Name is required' : null),
       stateCode: v => (v.length < 1 ? 'Code is required' : null),
+      countryId: v => (!v ? 'Country is required' : null),
     },
   });
   const [countries, setCountries] = useState<{ value: string; label: string }[]>([]);
@@ -43,6 +44,11 @@ export default function StateForm() {
           label: c.countryName,          // adjust to your field name
         }));
         setCountries(countryOptions);
+        
+        // Load state data after countries are loaded
+        if (isEdit && id) {
+          loadStateData();
+        }
       } catch (error) {
         console.error('Failed to fetch countries', error);
       } finally {
@@ -51,6 +57,18 @@ export default function StateForm() {
     };
 
     fetchCountries();
+
+    const loadStateData = async () => {
+      try {
+        const data: any = await getStateById(Number(id));
+        form.setValues({
+          ...data,
+          countryId: data.countryId?.toString() || ''
+        });
+      } catch {
+        errorNotification('State Not found');
+      }
+    };
 
 
 
@@ -62,18 +80,7 @@ export default function StateForm() {
 
   }, []);
 
-  useEffect(() => {
-    if (isEdit) {
-      (async () => {
-        try {
-          const data:any = await getStateById(Number(id));
-          form.setValues(data);
-        } catch {
-          errorNotification('State Not found');
-        }
-      })();
-    }
-  }, [id]);
+  // State data loading is now handled in fetchCountries to ensure proper order
 
   const handleSubmit = form.onSubmit(async (values:any) => {
     try {
@@ -95,12 +102,19 @@ export default function StateForm() {
           //console.log("handleSubmit : "+error.response.data.errorMessage);
         }).finally(()=>{setLoading(false);});
       } else {
-        addState(values).then((data)=>{
+        const payload = { 
+          ...values, 
+          countryId: parseInt(values.countryId) 
+        };
+        delete payload.stateId; // Remove stateId for new records
+        console.log('Sending payload:', payload);
+        addState(payload).then((data)=>{
           successNotification(data.message);
           navigate('/admin/mastersettings/states');
         }).catch((error)=>{
-          errorNotification(error.response.data.errorMessage);
-          //console.log("handleSubmit : "+error.response.data.errorMessage);
+          console.error('Full error:', error);
+          const errorMsg = error.response?.data?.errorMessage || error.message || 'Failed to create state';
+          errorNotification(errorMsg);
         }).finally(()=>{setLoading(false);});
       }
     } catch {
@@ -109,11 +123,17 @@ export default function StateForm() {
   });
 
   return (
-    <Container>
-      <Title order={2} mb="md">
-        {isEdit ? 'Edit State' : 'Add State'}
-      </Title>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6"
+    >
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          {isEdit ? 'Edit State' : 'Add State'}
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
 
 
         <Select label="Country" placeholder="Select country" 
@@ -121,8 +141,8 @@ export default function StateForm() {
         />
 
 
-        <TextInput label="State Name" {...form.getInputProps('stateName')} />
-        <TextInput label="State Code" {...form.getInputProps('stateCode')} />
+        <TextInput label="State Name" withAsterisk {...form.getInputProps('stateName')} />
+        <TextInput label="State Code" withAsterisk {...form.getInputProps('stateCode')} />
         <TextInput label="Created By" {...form.getInputProps('createdBy')} />
         
         <Textarea label="Description" {...form.getInputProps('description')} className="xl:col-span-2" />
@@ -149,6 +169,7 @@ export default function StateForm() {
           </Button>
         </div>
       </form>
-    </Container>
+      </div>
+    </motion.div>
   );
 }

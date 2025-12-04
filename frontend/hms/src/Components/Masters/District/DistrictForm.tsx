@@ -2,10 +2,12 @@ import { useForm } from '@mantine/form';
 import { Button, TextInput, Textarea, Container, Title, Switch} from '@mantine/core';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { addDistrict, getDistrictById, updateDistrict } from '../../../Services/DistrictServices';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 import { Select } from '@mantine/core';
 import { useState } from 'react';
+import { getState } from '../../../Services/StateServices';
 export default function DistrictForm() {
   const { id } = useParams();
   const isEdit = !!id;
@@ -13,7 +15,6 @@ export default function DistrictForm() {
   
   const form = useForm({
     initialValues: {
-      districtId:'',
       stateId: '',
       districtName: '',
       districtCode: '',
@@ -23,51 +24,49 @@ export default function DistrictForm() {
     validate: {
       districtName: v => (v.length < 2 ? 'Name is required' : null),
       districtCode: v => (v.length < 1 ? 'Code is required' : null),
+      stateId: v => (!v ? 'State is required' : null),
     },
   });
-  const [hospitals, setHospitals] = useState<{ value: string; label: string }[]>([]);
+  const [states, setStates] = useState<{ value: string; label: string }[]>([]);
 
   const [loading, setLoading]=useState(false);
   useEffect(() => {
-    // Replace with your actual service call
-    /*fetch('/api/hospitals')
-      .then(res => res.json())
-      .then(data => {
-        const options = data.map((h: any) => ({
-          value: h.id.toString(),
-          label: h.name,
-        }));
-        setHospitals(options);
-      });*/
-    // Simulating fetch with dummy data
-    const data = [
-      { id: 1, name: 'HIMS Hospital' },
-      { id: 2, name: 'Fortis Healthcare' },
-      { id: 3, name: 'AIIMS Delhi' },
-      { id: 4, name: 'Max Hospital' },
-    ];
-
-    const options = data.map((h) => ({
-      value: h.id.toString(),
-      label: h.name,
-    }));
-
-    setHospitals(options);
-
+    loadData();
   }, []);
 
-  useEffect(() => {
-    if (isEdit) {
-      (async () => {
-        try {
-          const data:any = await getDistrictById(Number(id));
-          form.setValues(data);
-        } catch {
-          errorNotification('District Not found');
-        }
-      })();
+  const loadData = async () => {
+    try {
+      // Load states
+      const stateRes = await getState(1, 100, '');
+      const stateOptions = stateRes.data.map((state: any) => ({
+        value: state.stateId.toString(),
+        label: state.stateName,
+      }));
+      setStates(stateOptions);
+
+      // Load district data after dropdowns are populated
+      if (isEdit && id) {
+        setTimeout(() => loadDistrictData(), 100);
+      }
+    } catch {
+      errorNotification('Failed to load data');
     }
-  }, [id]);
+  };
+
+  const loadDistrictData = async () => {
+    try {
+      const data: any = await getDistrictById(Number(id));
+      console.log('District data:', data);
+      form.setValues({
+        ...data,
+        stateId: data.stateId?.toString() || ''
+      });
+    } catch {
+      errorNotification('District Not found');
+    }
+  };
+
+  // District data loading is now handled in loadData to ensure proper order
 
   const handleSubmit = form.onSubmit(async (values:any) => {
     try {
@@ -89,7 +88,12 @@ export default function DistrictForm() {
           //console.log("handleSubmit : "+error.response.data.errorMessage);
         }).finally(()=>{setLoading(false);});
       } else {
-        addDistrict(values).then((data)=>{
+        const payload = {
+          ...values,
+          stateId: parseInt(values.stateId)
+        };
+        delete payload.districtId;
+        addDistrict(payload).then((data)=>{
           successNotification(data.message);
           navigate('/admin/mastersettings/districts');
         }).catch((error)=>{
@@ -103,23 +107,29 @@ export default function DistrictForm() {
   });
 
   return (
-    <Container>
-      <Title order={2} mb="md">
-        {isEdit ? 'Edit District' : 'Add District'}
-      </Title>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <TextInput label="State Id" {...form.getInputProps('stateId')} />
-        <TextInput label="District Name" {...form.getInputProps('districtName')} />
-        <TextInput label="District Code" {...form.getInputProps('districtCode')} />
-        <TextInput label="Created By" {...form.getInputProps('createdBy')} />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6"
+    >
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          {isEdit ? 'Edit District' : 'Add District'}
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <Select
-          label="Hospital"
-          placeholder="Select hospital"
-          data={hospitals}
+          label="State"
+          placeholder="Select state"
+          data={states}
           withAsterisk
           searchable
-          {...form.getInputProps('hospitalId')}
+          {...form.getInputProps('stateId')}
         />
+        <TextInput label="District Name" withAsterisk {...form.getInputProps('districtName')} />
+        <TextInput label="District Code" withAsterisk {...form.getInputProps('districtCode')} />
+        <TextInput label="Created By" {...form.getInputProps('createdBy')} />
+
         <Textarea label="Description" {...form.getInputProps('description')} className="xl:col-span-2" />
         <div className="flex items-center xl:justify-end">
           <Switch
@@ -144,6 +154,7 @@ export default function DistrictForm() {
           </Button>
         </div>
       </form>
-    </Container>
+      </div>
+    </motion.div>
   );
 }

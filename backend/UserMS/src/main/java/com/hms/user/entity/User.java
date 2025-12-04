@@ -3,11 +3,7 @@ package com.hms.user.entity;
 import com.hms.user.dto.Roles;
 import com.hms.user.dto.UserDTO;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,8 +22,22 @@ public class User {
 	private String password;
 	private Roles role;
     private Long profileId;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role userRole;
+    
+    private Boolean active = true;
 	
 	public UserDTO toUserDTO(){
-        return new UserDTO(this.id, this.name, this.email, this.password, this.role, this.profileId);
+        UserDTO dto = new UserDTO();
+        dto.setId(this.id);
+        dto.setName(this.name);
+        dto.setEmail(this.email);
+        dto.setPassword(this.password);
+        dto.setRole(this.role);
+        dto.setProfileId(this.profileId);
+        dto.setActive(this.active);
+        return dto;
     }
 }

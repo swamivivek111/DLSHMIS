@@ -1,22 +1,29 @@
 package com.hms.profile.api;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hms.profile.dto.DoctorDTO;
-import com.hms.profile.dto.DoctorDTO;
+import com.hms.profile.entity.Doctor;
 import com.hms.profile.exception.HMSException;
 import com.hms.profile.service.DoctorService;
 
@@ -29,23 +36,49 @@ public class DoctorAPI {
     private DoctorService doctorService;
 
     @PostMapping("/add")
-    public ResponseEntity<Long> addDoctor(@RequestBody DoctorDTO doctorDTO) throws HMSException {
-        return new ResponseEntity<>(doctorService.addDoctor(doctorDTO), HttpStatus.CREATED);
+    public ResponseEntity<Map<String, Object>> createDoctor(@RequestBody DoctorDTO doctorDTO) throws HMSException {
+        Long id = doctorService.addDoctor(doctorDTO);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Doctor created successfully!");
+        response.put("doctorId", id);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-    
-    @GetMapping("/get/{id}")
-    public ResponseEntity<DoctorDTO> getDoctor(@PathVariable Long id) throws HMSException {
-        return new ResponseEntity(doctorService.getDoctorById(id), HttpStatus.OK);
+
+    @PutMapping("/update/{doctorId}")
+    public ResponseEntity<Map<String, Object>> updateDoctor(@PathVariable Long doctorId, @RequestBody DoctorDTO dto) throws HMSException {
+        DoctorDTO updated = doctorService.updateDoctor(doctorId, dto);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Doctor updated successfully!");
+        response.put("data", updated);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    
+
+    @DeleteMapping("/delete/{doctorId}")
+    public ResponseEntity<Map<String, Object>> deleteDoctor(@PathVariable Long doctorId) throws HMSException {
+        doctorService.deleteDoctor(doctorId);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Doctor deleted successfully!");
+        response.put("doctorId", doctorId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/get/{doctorId}")
+    public ResponseEntity<DoctorDTO> getDoctorById(@PathVariable Long doctorId) throws HMSException {
+        return new ResponseEntity<>(doctorService.getDoctorById(doctorId), HttpStatus.OK);
+    }
+
     @GetMapping("/getall")
-    public ResponseEntity<List<DoctorDTO>> getAllDoctors() throws HMSException {
-        return new ResponseEntity(doctorService.getAllDoctors(), HttpStatus.OK);
-    }
-    
-    @PutMapping("/update")
-    public ResponseEntity<DoctorDTO> updateDoctor(@RequestBody DoctorDTO doctorDTO) throws HMSException {
-        return new ResponseEntity(doctorService.updateDoctor(doctorDTO), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getAllDoctors(@RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "10") int limit, @RequestParam(defaultValue = "") String search) {
+        
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Doctor> doctors = doctorService.findAll(search, pageable);
+        Map<String, Object> response = new HashMap<>();
+        response.put("doctors", doctors.getContent());
+        response.put("totalPages", doctors.getTotalPages());
+        response.put("totalItems", doctors.getTotalElements());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/exists/{id}")

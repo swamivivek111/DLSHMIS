@@ -2,11 +2,12 @@ import { useForm } from '@mantine/form';
 import { Button, TextInput, Textarea, Container, Title, Switch} from '@mantine/core';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { addTaluka, getTalukaById, updateTaluka } from '../../../Services/TalukaServices';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 import { Select } from '@mantine/core';
 import { useState } from 'react';
-import { talukaSpecializations } from '../../../DataMaster/DropdownData';
+import { getDistrict } from '../../../Services/DistrictServices';
 export default function TalukaForm() {
   const { id } = useParams();
   const isEdit = !!id;
@@ -14,7 +15,6 @@ export default function TalukaForm() {
   
   const form = useForm({
     initialValues: {
-      talukaId:'',
       districtId: '',
       talukaName: '',
       talukaCode: '',
@@ -24,45 +24,40 @@ export default function TalukaForm() {
     validate: {
       talukaName: v => (v.length < 2 ? 'Name is required' : null),
       talukaCode: v => (v.length < 1 ? 'Code is required' : null),
+      districtId: v => (!v ? 'District is required' : null),
     },
   });
-  const [hospitals, setHospitals] = useState<{ value: string; label: string }[]>([]);
+  const [districts, setDistricts] = useState<{ value: string; label: string }[]>([]);
 
   const [loading, setLoading]=useState(false);
   useEffect(() => {
-    // Replace with your actual service call
-    /*fetch('/api/hospitals')
-      .then(res => res.json())
-      .then(data => {
-        const options = data.map((h: any) => ({
-          value: h.id.toString(),
-          label: h.name,
-        }));
-        setHospitals(options);
-      });*/
-    // Simulating fetch with dummy data
-    const data = [
-      { id: 1, name: 'HIMS Hospital' },
-      { id: 2, name: 'Fortis Healthcare' },
-      { id: 3, name: 'AIIMS Delhi' },
-      { id: 4, name: 'Max Hospital' },
-    ];
-
-    const options = data.map((h) => ({
-      value: h.id.toString(),
-      label: h.name,
-    }));
-
-    setHospitals(options);
-
+    loadDistricts();
   }, []);
+
+  const loadDistricts = async () => {
+    try {
+      const res = await getDistrict(1, 100, '');
+      const districtOptions = res.data.map((district: any) => ({
+        value: (district.districtId || district.id).toString(),
+        label: district.districtName || district.name,
+      }));
+      setDistricts(districtOptions);
+    } catch {
+      errorNotification('Failed to load districts');
+    }
+  };
+
+
 
   useEffect(() => {
     if (isEdit) {
       (async () => {
         try {
           const data:any = await getTalukaById(Number(id));
-          form.setValues(data);
+          form.setValues({
+            ...data,
+            districtId: data.districtId?.toString() || ''
+          });
         } catch {
           errorNotification('Taluka Not found');
         }
@@ -90,7 +85,12 @@ export default function TalukaForm() {
           //console.log("handleSubmit : "+error.response.data.errorMessage);
         }).finally(()=>{setLoading(false);});
       } else {
-        addTaluka(values).then((data)=>{
+        const payload = {
+          ...values,
+          districtId: parseInt(values.districtId)
+        };
+        delete payload.talukaId;
+        addTaluka(payload).then((data)=>{
           successNotification(data.message);
           navigate('/admin/mastersettings/talukas');
         }).catch((error)=>{
@@ -104,23 +104,29 @@ export default function TalukaForm() {
   });
 
   return (
-    <Container>
-      <Title order={2} mb="md">
-        {isEdit ? 'Edit Taluka' : 'Add Taluka'}
-      </Title>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <TextInput label="District Id" {...form.getInputProps('districtId')} />
-        <TextInput label="Taluka Name" {...form.getInputProps('talukaName')} />
-        <TextInput label="Taluka Code" {...form.getInputProps('talukaCode')} />
-        <TextInput label="Created By" {...form.getInputProps('createdBy')} />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6"
+    >
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          {isEdit ? 'Edit Taluka' : 'Add Taluka'}
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <Select
-          label="Hospital"
-          placeholder="Select hospital"
-          data={hospitals}
+          label="District"
+          placeholder="Select district"
+          data={districts}
           withAsterisk
           searchable
-          {...form.getInputProps('hospitalId')}
+          {...form.getInputProps('districtId')}
         />
+        <TextInput label="Taluka Name" withAsterisk {...form.getInputProps('talukaName')} />
+        <TextInput label="Taluka Code" withAsterisk {...form.getInputProps('talukaCode')} />
+        <TextInput label="Created By" {...form.getInputProps('createdBy')} />
+
         <Textarea label="Description" {...form.getInputProps('description')} className="xl:col-span-2" />
         <div className="flex items-center xl:justify-end">
           <Switch
@@ -145,6 +151,7 @@ export default function TalukaForm() {
           </Button>
         </div>
       </form>
-    </Container>
+      </div>
+    </motion.div>
   );
 }

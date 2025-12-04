@@ -1,0 +1,5 @@
+com\hms\medicalrecords\api\MedicalRecordsAPI.class
+com\hms\medicalrecords\config\SecurityConfig.class
+com\hms\medicalrecords\MedicalRecordsMsApplication.class
+com\hms\medicalrecords\repository\MedicalRecordRepository.class
+com\hms\medicalrecords\entity\MedicalRecord.class

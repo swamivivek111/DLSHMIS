@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Button } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 import { Employee } from '../../Types/Employee';
 import DataTable from '../../DataTable/DataTable';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
@@ -17,9 +20,12 @@ export default function EmployeeGrid() {
   const fetchData = async () => {
     try {
       const res = await getEmployee(page, PAGE_SIZE, search);
-      setEmployees(res.data);
-      setTotalPages(res.totalPages);
-    } catch {
+      setEmployees(res.data || []);
+      setTotalPages(res.totalPages || 1);
+    } catch (error) {
+      console.error('Error loading employees:', error);
+      setEmployees([]);
+      setTotalPages(1);
       errorNotification('Failed to load employees');
     }
   };
@@ -29,14 +35,31 @@ export default function EmployeeGrid() {
   }, [page, search]);
 
   return (
-    <DataTable<Employee>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6"
+    >
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Employee Management</h2>
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={() => navigate('/admin/mastersettings/employees/add')}
+          >
+            Add Employee
+          </Button>
+        </div>
+
+        <DataTable<Employee>
       data={employees}
       columns={[
         { key: 'employeeId', label: 'Employee Id' },
         { key: 'employeeCode', label: 'Employee Code' },
         { key: 'firstName', label: 'First Name' },
-        { key: 'middleName', label: 'Middle Name' },
         { key: 'lastName', label: 'Last Name' },
+        { key: 'departmentId', label: 'Department' },
         { key: 'mobileNo', label: 'Mobile Number' },
       ]}
       onView={(d) => navigate(`/admin/mastersettings/employees/view/${d.employeeId}`)}
@@ -53,5 +76,7 @@ export default function EmployeeGrid() {
       pagination={{ page, total: totalPages, onPageChange: setPage }}
       search={{ value: search, onChange: setSearch }}
     />
+      </div>
+    </motion.div>
   );
 }

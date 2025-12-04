@@ -12,4 +12,5 @@ public interface PatientService {
     public PatientDTO updatePatient(PatientDTO patientDTO)throws HMSException;
     public boolean exitPatientById(Long id) throws HMSException;
     public List<Patient> getAllPatients();
+    public void deletePatient(Long id) throws HMSException;
 }

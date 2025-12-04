@@ -31,25 +31,54 @@ const Login = () => {
   const handleSubmit = (values: typeof form.values) => {
     setLoading(true);
     loginUser(values)
-      .then((_data) => {
-        // Save token
-        localStorage.setItem('token', _data);
+      .then((data) => {
+        // Extract tokens from response
+        const token = data.accessToken;
+        const refreshToken = data.refreshToken;
+        
+        if (!token) {
+          throw new Error('No access token received');
+        }
+
+        // Save tokens
+        localStorage.setItem('token', token);
+        localStorage.setItem('accessToken', token);
+        localStorage.setItem('refreshToken', refreshToken);
 
         // Decode user details
-        const decoded: any = jwtDecode(_data);
+        const decoded: any = jwtDecode(token);
 
         successNotification('Login successful, Welcome to DLS HMIS!');
-        dispatch(setJwt(_data));
+        dispatch(setJwt(token));
         dispatch(setUser(decoded));
 
-        // Check for redirect path (saved by axios interceptor on 401/403)
-        const redirectPath = localStorage.getItem('redirectPath') || '/dashboard';
+        // Check for last visited path or redirect path
+        const lastVisitedPath = localStorage.getItem('lastVisitedPath');
+        const redirectPath = localStorage.getItem('redirectPath');
+        const targetPath = lastVisitedPath || redirectPath || `/${decoded.role.toLowerCase()}/dashboard`;
+        
+        localStorage.removeItem('lastVisitedPath');
         localStorage.removeItem('redirectPath');
 
-        navigate(redirectPath, { replace: true });
+        navigate(targetPath, { replace: true });
       })
       .catch((error) => {
-        errorNotification(error?.response?.data?.errorMessage || 'Login failed');
+        let errorMessage = 'Login failed. Please try again.';
+        
+        if (error?.response?.data?.errorMessage) {
+          const serverError = error.response.data.errorMessage;
+          if (serverError === 'INVALID_CREDENTIALS') {
+            errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+          } else if (serverError === 'USER_NOT_FOUND') {
+            errorMessage = 'No account found with this email address.';
+          } else if (serverError === 'ACCOUNT_LOCKED') {
+            errorMessage = 'Your account has been locked. Please contact administrator.';
+          } else {
+            errorMessage = serverError;
+          }
+        }
+        
+        errorNotification(errorMessage);
       })
       .finally(() => {
         setLoading(false);

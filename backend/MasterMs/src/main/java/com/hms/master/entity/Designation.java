@@ -21,6 +21,7 @@ public class Designation {
     @Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long designationId;
+    private Long hospitalId;
     private String designationName;
     private String description;
     private String designationCode;
@@ -31,7 +32,7 @@ public class Designation {
     private LocalDateTime updatedAt;
 
     public DesignationDTO toDTO(){
-        return new DesignationDTO(designationId, designationName, description, designationCode, createdBy,
+        return new DesignationDTO(designationId, hospitalId, designationName, description, designationCode, createdBy,
         updatedBy, active, createdAt, updatedAt);
     }
 }

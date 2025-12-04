@@ -28,7 +28,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public EmployeeDTO getById(Long employeeId) throws HMSException {
-        return employeeRepository.findById(employeeId).orElseThrow(() -> new HMSException("DOCTOR_NOT_FOUND")).toDTO();
+        return employeeRepository.findById(employeeId).orElseThrow(() -> new HMSException("EMPLOYEE_NOT_FOUND")).toDTO();
     }
 
    @Override
@@ -54,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO) throws HMSException {
-        Employee existingEmployee = employeeRepository.findById(id).orElseThrow(() -> new HMSException("DOCTOR_NOT_FOUND"));
+        Employee existingEmployee = employeeRepository.findById(id).orElseThrow(() -> new HMSException("EMPLOYEE_NOT_FOUND"));
             existingEmployee.setEmployeeCode(employeeDTO.getEmployeeCode());
             existingEmployee.setTitleId(employeeDTO.getTitleId());
             existingEmployee.setFirstName(employeeDTO.getFirstName());
@@ -73,7 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService{
             existingEmployee.setCityId(employeeDTO.getCityId());
             existingEmployee.setStateId(employeeDTO.getStateId());
             existingEmployee.setPincode(employeeDTO.getPincode());
-            existingEmployee.setCountry(employeeDTO.getCountry());
+            existingEmployee.setCountryId(employeeDTO.getCountryId());
             existingEmployee.setRemark(employeeDTO.getRemark());
             existingEmployee.setUpdatedBy(employeeDTO.getUpdatedBy());
             existingEmployee.setActive(employeeDTO.getActive());
@@ -85,7 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public void deleteEmployee(Long id) throws HMSException {
         if (!employeeRepository.existsById(id)) {
-            throw new HMSException("DOCTOR_NOT_FOUND");
+            throw new HMSException("EMPLOYEE_NOT_FOUND");
         }
         employeeRepository.deleteById(id);
     }

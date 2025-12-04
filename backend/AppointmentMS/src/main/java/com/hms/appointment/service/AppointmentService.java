@@ -1,37 +1,33 @@
 package com.hms.appointment.service;
 
+import com.hms.appointment.dto.AppointmentDTO;
+import com.hms.appointment.entity.Appointment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-
-import com.hms.appointment.dto.AppointmentDTO;
-import com.hms.appointment.dto.AppointmentStatus;
-import com.hms.appointment.entity.Appointment;
-import com.hms.appointment.exception.HMSException;
+import java.util.Map;
 
 public interface AppointmentService {
-
-    Long scheduleAppointment(AppointmentDTO appointmentDTO) throws HMSException;
-
-    AppointmentDTO updateAppointment(Long id, AppointmentDTO appointmentDTO)throws HMSException;
-
-    void cancelAppointment(Long id)throws HMSException;
-
-    void completeAppointment(Long id)throws HMSException;
-
+    
+    AppointmentDTO createAppointment(AppointmentDTO appointmentDTO);
+    
+    AppointmentDTO updateAppointment(Long id, AppointmentDTO appointmentDTO);
+    
     void deleteAppointment(Long id);
-
-    Optional<Appointment> getAppointmentById(Long id);
-
-    List<Appointment> getAllAppointments();
-
-    List<Appointment> getAppointmentsByPatientId(Long patientId);
-
-    List<Appointment> getAppointmentsByDoctorId(Long doctorId);
-
-    List<Appointment> getAppointmentsByStatus(AppointmentStatus status);
-
-    List<Appointment> getAppointmentsBetweenDates(LocalDateTime start, LocalDateTime end);
-
-    Appointment rescheduleAppointment(Long id, LocalDateTime newDateTime)throws HMSException;
+    
+    AppointmentDTO getAppointmentById(Long id);
+    
+    Page<Appointment> getAllAppointments(String search, Pageable pageable);
+    
+    AppointmentDTO cancelAppointment(Long id);
+    
+    AppointmentDTO rescheduleAppointment(Long id, LocalDateTime newDate, String newTimeSlot);
+    
+    List<String> getAvailableTimeSlots(Long doctorId, LocalDateTime date);
+    
+    List<AppointmentDTO> getDoctorAppointments(Long doctorId, LocalDateTime startDate, LocalDateTime endDate);
+    
+    Map<String, Object> getDoctorSchedule(Long doctorId, String date);
 }

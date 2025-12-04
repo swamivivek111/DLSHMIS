@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
-
 import reactor.core.publisher.Mono;
 
 @Service
@@ -25,4 +24,6 @@ public class APIService {//To call from other MS
     public Mono<Boolean> isUserExists(Long id){
         return webClient.build().get().uri("http://localhost:8081/user/exists/"+id).retrieve().bodyToMono(Boolean.class);
     }
+    
+    // Doctor-related methods moved to ProfileMs
 }

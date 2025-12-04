@@ -1,124 +1,160 @@
 package com.hms.appointment.api;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.hms.appointment.dto.AppointmentDTO;
+import com.hms.appointment.entity.Appointment;
+import com.hms.appointment.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.hms.appointment.dto.AppointmentDTO;
-import com.hms.appointment.dto.AppointmentStatus;
-import com.hms.appointment.entity.Appointment;
-import com.hms.appointment.exception.HMSException;
-import com.hms.appointment.service.APIService;
-import com.hms.appointment.service.AppointmentService;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
-@CrossOrigin
-@Validated
 @RequestMapping("/appointment")
+@CrossOrigin
 public class AppointmentAPI {
-    @Autowired 
+    
+    @Autowired
     private AppointmentService appointmentService;
-
-    @PostMapping("/schedule")
-    public ResponseEntity<Long> addAppointment(@RequestBody AppointmentDTO appointmentDTO) throws HMSException {
-        return new ResponseEntity<>(appointmentService.scheduleAppointment(appointmentDTO), HttpStatus.CREATED);
+    
+    @PostMapping("/create")
+    public ResponseEntity<Map<String, Object>> createAppointment(@RequestBody AppointmentDTO appointmentDTO) {
+        try {
+            System.out.println("Creating appointment: " + appointmentDTO.getPatientName());
+            AppointmentDTO created = appointmentService.createAppointment(appointmentDTO);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Appointment created successfully!");
+            response.put("data", created);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.err.println("API Error: " + e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to create appointment: " + e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Map<String, Object>> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO appointmentDTO) {
+        AppointmentDTO updated = appointmentService.updateAppointment(id, appointmentDTO);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Appointment updated successfully!");
+        response.put("data", updated);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Map<String, Object>> deleteAppointment(@PathVariable Long id) {
+        appointmentService.deleteAppointment(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Appointment deleted successfully!");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @GetMapping("/get/{id}")
+    public ResponseEntity<AppointmentDTO> getAppointmentById(@PathVariable Long id) {
+        AppointmentDTO appointment = appointmentService.getAppointmentById(id);
+        return new ResponseEntity<>(appointment, HttpStatus.OK);
+    }
+    
+    @GetMapping("/getall")
+    public ResponseEntity<Map<String, Object>> getAllAppointments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String search) {
+        
+        try {
+            System.out.println("Getting appointments - page: " + page + ", size: " + size);
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Appointment> appointments = appointmentService.getAllAppointments(search, pageable);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("content", appointments.getContent());
+            response.put("totalPages", appointments.getTotalPages());
+            response.put("totalElements", appointments.getTotalElements());
+            response.put("size", appointments.getSize());
+            response.put("number", appointments.getNumber());
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("Error getting appointments: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get appointments: " + e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     @PutMapping("/cancel/{id}")
-    public ResponseEntity<String> cancelAppointment(@PathVariable Long id) throws HMSException {
-        appointmentService.cancelAppointment(id);
-        return new ResponseEntity("Appointment Canceled", HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> cancelAppointment(@PathVariable Long id) {
+        AppointmentDTO cancelled = appointmentService.cancelAppointment(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Appointment cancelled successfully!");
+        response.put("data", cancelled);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    // 1. Schedule Appointment
-
-    // 2. Update Appointment
-    @PutMapping("/{id}")
-    public ResponseEntity<AppointmentDTO> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO dto) throws HMSException {
-        AppointmentDTO updated = appointmentService.updateAppointment(id, dto);
-        return ResponseEntity.ok(updated);
-    }
-
-    // 3. Cancel Appointment
-
-    // 4. Delete Appointment
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteAppointment(@PathVariable Long id) {
-        appointmentService.deleteAppointment(id);
-        return ResponseEntity.ok("Appointment deleted");
-    }
-
-    // 5. Get Appointment by ID
-    @GetMapping("/get/{id}")
-    public ResponseEntity<Appointment> getAppointmentById(@PathVariable Long id) throws HMSException {
-        return appointmentService.getAppointmentById(id)
-            .map(ResponseEntity::ok)
-            .orElseThrow(() -> new HMSException("APPOINTMENT_NOT_FOUND"));
-    }
-
-    // 6. Get All Appointments
-    @GetMapping("/getall")
-    public ResponseEntity<List<Appointment>> getAllAppointments() {
-        return ResponseEntity.ok(appointmentService.getAllAppointments());
-    }
-
-    // 7. Get Appointments by Patient ID
-    @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<Appointment>> getAppointmentsByPatientId(@PathVariable Long patientId) {
-        return ResponseEntity.ok(appointmentService.getAppointmentsByPatientId(patientId));
-    }
-
-    // 8. Get Appointments by Doctor ID
-    @GetMapping("/doctor/{doctorId}")
-    public ResponseEntity<List<Appointment>> getAppointmentsByDoctorId(@PathVariable Long doctorId) {
-        return ResponseEntity.ok(appointmentService.getAppointmentsByDoctorId(doctorId));
-    }
-
-    // 9. Get Appointments by Status
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<Appointment>> getAppointmentsByStatus(@PathVariable AppointmentStatus status) {
-        return ResponseEntity.ok(appointmentService.getAppointmentsByStatus(status));
-    }
-
-    // 10. Get Appointments Between Dates
-    @GetMapping("/between")
-    public ResponseEntity<List<Appointment>> getAppointmentsBetween(
-            @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-            @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
-    ) {
-        return ResponseEntity.ok(appointmentService.getAppointmentsBetweenDates(start, end));
-    }
-
-    // 11. Reschedule Appointment
+    
     @PutMapping("/reschedule/{id}")
-    public ResponseEntity<String> rescheduleAppointment(
+    public ResponseEntity<Map<String, Object>> rescheduleAppointment(
             @PathVariable Long id,
-            @RequestParam("newDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime newDateTime
-    ) throws HMSException {
-        appointmentService.rescheduleAppointment(id, newDateTime);
-        return ResponseEntity.ok("Appointment rescheduled");
+            @RequestBody Map<String, Object> request) {
+        
+        LocalDateTime newDate = LocalDateTime.parse((String) request.get("appointmentDate"));
+        String newTimeSlot = (String) request.get("timeSlot");
+        
+        AppointmentDTO rescheduled = appointmentService.rescheduleAppointment(id, newDate, newTimeSlot);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Appointment rescheduled successfully!");
+        response.put("data", rescheduled);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    // 12. Complete Appointment
-    @PutMapping("/complete/{id}")
-    public ResponseEntity<String> completeAppointment(@PathVariable Long id) throws HMSException {
-        appointmentService.completeAppointment(id);
-        return ResponseEntity.ok("Appointment completed");
+    
+    @GetMapping("/available-slots/{doctorId}/{date}")
+    public ResponseEntity<List<String>> getAvailableTimeSlots(
+            @PathVariable Long doctorId,
+            @PathVariable String date) {
+        
+        LocalDateTime appointmentDate = LocalDateTime.parse(date + "T00:00:00");
+        List<String> bookedSlots = appointmentService.getAvailableTimeSlots(doctorId, appointmentDate);
+        return ResponseEntity.ok(bookedSlots);
     }
-
+    
+    @GetMapping("/booked-slots/{doctorId}/{date}")
+    public ResponseEntity<List<String>> getBookedTimeSlots(
+            @PathVariable Long doctorId,
+            @PathVariable String date) {
+        
+        LocalDateTime appointmentDate = LocalDateTime.parse(date + "T00:00:00");
+        List<String> bookedSlots = appointmentService.getAvailableTimeSlots(doctorId, appointmentDate);
+        return ResponseEntity.ok(bookedSlots);
+    }
+    
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<List<AppointmentDTO>> getDoctorAppointments(
+            @PathVariable Long doctorId,
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        
+        LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+        LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+        
+        List<AppointmentDTO> appointments = appointmentService.getDoctorAppointments(doctorId, start, end);
+        return ResponseEntity.ok(appointments);
+    }
+    
+    @GetMapping("/doctor-schedule/{doctorId}/{date}")
+    public ResponseEntity<Map<String, Object>> getDoctorSchedule(
+            @PathVariable Long doctorId,
+            @PathVariable String date) {
+        
+        Map<String, Object> schedule = appointmentService.getDoctorSchedule(doctorId, date);
+        return ResponseEntity.ok(schedule);
+    }
 }

@@ -7,9 +7,11 @@ interface Props {
   onSearchChange: (value: string) => void;
   onAdd?: () => void;
   canExport?: boolean;
+  exportData?: any[];
+  exportFilename?: string;
 }
 
-export default function TableToolbar({ searchValue, onSearchChange, onAdd, canExport }: Props) {
+export default function TableToolbar({ searchValue, onSearchChange, onAdd, canExport, exportData, exportFilename }: Props) {
   return (
     <Group justify="space-between" style={{ width: '100%' }} align="center">
       <TextInput
@@ -21,7 +23,7 @@ export default function TableToolbar({ searchValue, onSearchChange, onAdd, canEx
       />
 
       <Group wrap="nowrap">
-        {canExport && <ExportButton />}
+        {canExport && <ExportButton data={exportData} filename={exportFilename} />}
         {onAdd && (
           <Button onClick={onAdd} className="flex items-center gap-2 ml-4 bg-[#202A44] text-white hover:bg-[#1a2236]">
             Add

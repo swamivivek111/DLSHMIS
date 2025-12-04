@@ -57,7 +57,11 @@ public class StateServiceImpl implements StateService{
     @Override
     public Long createState(StateDTO stateDTO) {
 
-        Country country= (Country) countryRepository.findBycountryId(stateDTO.getCountryId());
+        Optional<Country> countryOpt = countryRepository.findById(stateDTO.getCountryId());
+        if (countryOpt.isEmpty()) {
+            throw new RuntimeException("Country not found with ID: " + stateDTO.getCountryId());
+        }
+        Country country = countryOpt.get();
         State state = stateDTO.toEntity(country);
 
         state.setCreatedAt(LocalDateTime.now()); 
@@ -68,7 +72,10 @@ public class StateServiceImpl implements StateService{
     @Override
     public StateDTO updateState(Long stateId, StateDTO stateDTO) throws HMSException {
         State existingState = stateRepository.findById(stateId).orElseThrow(() -> new HMSException("DEPARTMENT_NOT_FOUND"));
-            existingState.setCountry((Country) countryRepository.findBycountryId(stateDTO.getCountryId()));
+            Optional<Country> countryOpt = countryRepository.findById(stateDTO.getCountryId());
+            if (countryOpt.isPresent()) {
+                existingState.setCountry(countryOpt.get());
+            }
             existingState.setStateName(stateDTO.getStateName());
             existingState.setStateCode(stateDTO.getStateCode());
             existingState.setUpdatedBy(stateDTO.getUpdatedBy());
@@ -88,10 +95,14 @@ public class StateServiceImpl implements StateService{
 
     @Override
     public Page<State> findAll(String search, Pageable pageable) {
-        if (search == null || search.isBlank()) {
-            return stateRepository.findAll(pageable);
+        try {
+            if (search == null || search.isBlank()) {
+                return stateRepository.findAll(pageable);
+            }
+            return stateRepository.findByStateNameContainingIgnoreCase(search, pageable);
+        } catch (Exception e) {
+            throw new RuntimeException("Error fetching states: " + e.getMessage());
         }
-        return stateRepository.findByStateNameContainingIgnoreCase(search, pageable);
     }
 
    

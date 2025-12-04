@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Button } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 import { TitleMaster } from '../../Types/Title';
 import DataTable from '../../DataTable/DataTable';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
@@ -29,7 +32,24 @@ export default function TitleGrid() {
   }, [page, search]);
 
   return (
-    <DataTable<TitleMaster>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6"
+    >
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Title Management</h2>
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={() => navigate('/admin/mastersettings/titles/add')}
+          >
+            Add Title
+          </Button>
+        </div>
+
+        <DataTable<TitleMaster>
       data={titles}
       columns={[
         { key: 'titleName', label: 'Title Name' },
@@ -49,6 +69,8 @@ export default function TitleGrid() {
       pagination={{ page, total: totalPages, onPageChange: setPage }}
       search={{ value: search, onChange: setSearch }}
     />
+      </div>
+    </motion.div>
   );
 }
  

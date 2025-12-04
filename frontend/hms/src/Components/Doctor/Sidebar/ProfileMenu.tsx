@@ -8,17 +8,44 @@ import { removeJwt } from '../../../Slices/JwtSlice';
 import { removeUser } from '../../../Slices/UserSlice';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ProfileMenu=()=> {
   const user=useSelector((state:any)=>state.user);
   const dispatch = useDispatch();
   const jwt=useSelector((state:any)=>state.jwt);
   const navigate=useNavigate();
-  const handleLogout=()=>{
-    dispatch(removeJwt());
-    dispatch(removeUser());
-    console.log('Logout');
-  }
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
+      console.log('=== LOGOUT DEBUG ===');
+      console.log('Token found:', token ? 'Yes' : 'No');
+      console.log('Token length:', token ? token.length : 0);
+      
+      if (token) {
+        console.log('Calling logout API at:', 'http://localhost:9000/user/logout');
+        const response = await axios.post('http://localhost:9000/user/logout', {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log('Logout API success:', response.data);
+        console.log('Response status:', response.status);
+      } else {
+        console.warn('No token found - skipping logout API call');
+      }
+    } catch (error) {
+      console.error('=== LOGOUT ERROR ===');
+      console.error('Error details:', error.response?.data || error.message);
+      console.error('Error status:', error.response?.status);
+      console.error('Full error:', error);
+    } finally {
+      // Clear local state regardless of API call result
+      localStorage.removeItem('token');
+      localStorage.removeItem('accessToken');
+      dispatch(removeJwt());
+      dispatch(removeUser());
+      console.log('=== LOGOUT CLEANUP COMPLETED ===');
+    }
+  };
   const handleProfile=()=>{
     navigate(`/${user?.role?.toLowerCase()}/profile`);
     console.log('Logout');

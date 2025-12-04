@@ -3,6 +3,7 @@ package com.hms.master.api;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -46,8 +47,8 @@ public class StateAPI {
     }
 
     @PutMapping("/update/{stateId}")
-    public ResponseEntity<Map<String, Object>> updateState(@PathVariable Long id, @RequestBody StateDTO dto) throws HMSException {
-        StateDTO updated = stateService.updateState(id, dto);
+    public ResponseEntity<Map<String, Object>> updateState(@PathVariable Long stateId, @RequestBody StateDTO dto) throws HMSException {
+        StateDTO updated = stateService.updateState(stateId, dto);
         Map<String, Object> response = new HashMap<>();
         response.put("message", "State updated successfully!");
         response.put("data", updated);
@@ -69,17 +70,28 @@ public class StateAPI {
     }
 
     @GetMapping("/getall")
-    public ResponseEntity<Map<String, Object>> getAllStates(@RequestParam(defaultValue = "1") int page,
+    public ResponseEntity<Map<String, Object>> getAllStates(@RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int limit, @RequestParam(defaultValue = "") String search) {
         
-        Pageable pageable = PageRequest.of(page, limit);
-        Page<State> states = stateService.findAll(search, pageable);
-        Map<String, Object> response = new HashMap<>();
-        response.put("states", states.getContent());
-        response.put("totalPages", states.getTotalPages());
-        response.put("totalItems", states.getTotalElements()); 
+        try {
+            Pageable pageable = PageRequest.of(page, limit);
+            Page<State> states = stateService.findAll(search, pageable);
+            
+            List<StateDTO> stateDTOs = states.getContent().stream()
+                .map(State::toDTO)
+                .collect(Collectors.toList());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("states", stateDTOs);
+            response.put("totalPages", states.getTotalPages());
+            response.put("totalItems", states.getTotalElements()); 
 
-        return ResponseEntity.ok(response);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to fetch states: " + e.getMessage());
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

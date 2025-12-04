@@ -1,55 +1,131 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Button, Badge } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 import { useNavigate } from 'react-router-dom';
-import { Department } from '../../Types/Department';
 import DataTable from '../../DataTable/DataTable';
-import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
-import { deleteDepartment, getDepartment } from '../../../Services/DepartmentServices';
+import { getDepartment, deleteDepartment } from '../../../Services/DepartmentServices';
 
-const PAGE_SIZE = 10;
-
-export default function DepartmentGrid() {
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState('');
+const DepartmentGrid: React.FC = () => {
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchValue, setSearchValue] = useState('');
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
-  const fetchData = async () => {
+  const columns = [
+    { key: 'id', label: 'Department ID' },
+    { key: 'name', label: 'Department Name' },
+    { key: 'code', label: 'Department Code' },
+    { key: 'headOfDepartment', label: 'Head of Department' },
+    { key: 'contactNumber', label: 'Contact Number' },
+    { key: 'email', label: 'Email' },
+    { 
+      key: 'active', 
+      label: 'Status',
+      render: (row: any) => (
+        <Badge color={row.active ? 'green' : 'red'}>
+          {row.active ? 'ACTIVE' : 'INACTIVE'}
+        </Badge>
+      )
+    },
+  ];
+
+  const fetchDepartments = async () => {
+    setLoading(true);
     try {
-      const res = await getDepartment(page, PAGE_SIZE, search);
-      setDepartments(res.data);
-      setTotalPages(res.totalPages);
-    } catch {
-      errorNotification('Failed to load departments');
+      const response = await getDepartment(currentPage, 10, searchValue);
+      setDepartments(response.data || []);
+      setTotalPages(response.totalPages || 0);
+    } catch (error) {
+      console.error('Error fetching departments:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to fetch departments',
+        color: 'red',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, [page, search]);
+    fetchDepartments();
+  }, [currentPage, searchValue]);
+
+  const handleAdd = () => {
+    navigate('/admin/mastersettings/departments/add');
+  };
+
+  const handleEdit = (department: any) => {
+    navigate(`/admin/mastersettings/departments/edit/${department.id}`);
+  };
+
+  const handleView = (department: any) => {
+    navigate(`/admin/mastersettings/departments/view/${department.id}`);
+  };
+
+  const handleDelete = async (department: any) => {
+    if (window.confirm('Are you sure you want to delete this department?')) {
+      try {
+        await deleteDepartment(department.id);
+        notifications.show({
+          title: 'Success',
+          message: 'Department deleted successfully',
+          color: 'green',
+        });
+        fetchDepartments();
+      } catch (error) {
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to delete department',
+          color: 'red',
+        });
+      }
+    }
+  };
 
   return (
-    <DataTable<Department>
-      data={departments}
-      columns={[
-        { key: 'name', label: 'Department' },
-        { key: 'code', label: 'Code' },
-        { key: 'headOfDepartment', label: 'HOD' },
-        { key: 'contactNumber', label: 'Contact' },
-      ]}
-      onView={(d) => navigate(`/admin/mastersettings/departments/view/${d.id}`)}
-      onEdit={(d) => navigate(`/admin/mastersettings/departments/edit/${d.id}`)}
-      onDelete={async (d) => {
-        if (confirm('Delete '+d.name+' department?')) {
-          await deleteDepartment(d.id);
-          successNotification(d.name+' department deleted successfully!');
-          fetchData();
-        }
-      }}
-      onAdd={() => navigate('/admin/mastersettings/departments/add')}
-      canExport
-      pagination={{ page, total: totalPages, onPageChange: setPage }}
-      search={{ value: search, onChange: setSearch }}
-    />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6"
+    >
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Department Management</h2>
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={handleAdd}
+          >
+            Add Department
+          </Button>
+        </div>
+
+        <DataTable
+          data={departments}
+          columns={columns}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onView={handleView}
+          onAdd={handleAdd}
+          pagination={{
+            page: currentPage,
+            total: totalPages,
+            onPageChange: setCurrentPage,
+          }}
+          search={{
+            value: searchValue,
+            onChange: setSearchValue,
+          }}
+          loading={loading}
+        />
+      </div>
+    </motion.div>
   );
-}
+};
+
+export default DepartmentGrid;

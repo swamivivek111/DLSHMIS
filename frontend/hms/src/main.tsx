@@ -15,11 +15,11 @@ const theme = createTheme({
     fontFamily:"Merriweather, serif"
   },
   colors:{
-    primary: ['#f1fcfa', '#cff8ef', '#9ff0e1', '#67e1cf', '#32b9a9', '#1fad9f', '#168b82', '#166f69', '#165955', '#174a47', '#072c2b'],    
+    primary: ['#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', 'rgb(32 42 68)', '#1e293b', '#0f172a', '#020617', '#0c1220', '#0a0f1c', '#080b14'],    
     neutral: ['#f6f6f6', '#e7e7e7', '#d1d1d1', '#b0b0b0', '#888888', '#6d6d6d', '#5d5d5d', '#4f4f4f', '#454545', '#3d3d3d', '#000000',]
   },
   primaryColor:"primary",
-  primaryShade:4,//#32b9a9
+  primaryShade:4,//rgb(32 42 68)
   defaultGradient:{
     from:"primary.4",
     to:"primary.8",

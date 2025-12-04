@@ -11,4 +11,10 @@ const loginUser=async(user:any)=>{
     .catch((error:any) => {throw error;}); // runs if reject()
 };
 
-export {registerUser, loginUser};
+const logoutUser=async()=>{
+    return axiosInstance.post('/user/logout', {})
+    .then((response:any) => response.data)
+    .catch((error:any) => {throw error;});
+};
+
+export {registerUser, loginUser, logoutUser};

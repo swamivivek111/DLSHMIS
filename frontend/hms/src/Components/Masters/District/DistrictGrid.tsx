@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Badge, Button } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 import { District } from '../../Types/District';
 import DataTable from '../../DataTable/DataTable';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
@@ -29,12 +32,37 @@ export default function DistrictGrid() {
   }, [page, search]);
 
   return (
-    <DataTable<District>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6"
+    >
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">District Management</h2>
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={() => navigate('/admin/mastersettings/districts/add')}
+          >
+            Add District
+          </Button>
+        </div>
+
+        <DataTable<District>
       data={districts}
       columns={[
-        { key: 'districtId', label: 'District Id' },
         { key: 'districtName', label: 'District Name' },
-        { key: 'stateId', label: 'State Id' },
+        { key: 'districtCode', label: 'District Code' },
+        { 
+          key: 'active', 
+          label: 'Status',
+          render: (district: District) => (
+            <Badge color={district.active ? 'green' : 'red'} size="sm">
+              {district.active ? 'Active' : 'Inactive'}
+            </Badge>
+          )
+        },
       ]}
       onView={(d) => navigate(`/admin/mastersettings/districts/view/${d.districtId}`)}
       onEdit={(d) => navigate(`/admin/mastersettings/districts/edit/${d.districtId}`)}
@@ -50,6 +78,8 @@ export default function DistrictGrid() {
       pagination={{ page, total: totalPages, onPageChange: setPage }}
       search={{ value: search, onChange: setSearch }}
     />
+      </div>
+    </motion.div>
   );
 }
  

@@ -10,11 +10,8 @@ import org.springframework.stereotype.Repository;
 import com.hms.master.entity.UserProfileRole;
 
 @Repository
-public interface UserProfileRoleRepository extends CrudRepository<UserProfileRole, Long>{
-
-List<UserProfileRole> findByRoleId(Long roleId);
-Page<UserProfileRole> findByRoleNameContainingIgnoreCase(String name, Pageable pageable);
-Page<UserProfileRole> findAll(Pageable pageable);
-    
+public interface UserProfileRoleRepository extends CrudRepository<UserProfileRole, Long> {
+    List<UserProfileRole> findByRoleId(Long roleId);
+    Page<UserProfileRole> findByRoleNameContainingIgnoreCase(String roleName, Pageable pageable);
+    Page<UserProfileRole> findAll(Pageable pageable);
 }
-

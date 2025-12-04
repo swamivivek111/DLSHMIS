@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Dr. John Smith",
+    "specialization": "Cardiology", 
+    "qualification": "MBBS, MD Cardiology",
+    "experienceYears": 15,
+    "phoneNumber": "9876543210",
+    "email": "john.smith@hospital.com",
+    "departmentId": 1,
+    "hospitalId": 1,
+    "active": true
+  },
+  {
+    "name": "Dr. Sarah Johnson",
+    "specialization": "Neurology",
+    "qualification": "MBBS, DM Neurology", 
+    "experienceYears": 12,
+    "phoneNumber": "9876543211",
+    "email": "sarah.johnson@hospital.com",
+    "departmentId": 2,
+    "hospitalId": 1,
+    "active": true
+  },
+  {
+    "name": "Dr. Michael Brown",
+    "specialization": "Orthopedics",
+    "qualification": "MBBS, MS Orthopedics",
+    "experienceYears": 10, 
+    "phoneNumber": "9876543212",
+    "email": "michael.brown@hospital.com",
+    "departmentId": 3,
+    "hospitalId": 1,
+    "active": true
+  },
+  {
+    "name": "Dr. Emily Davis",
+    "specialization": "Pediatrics",
+    "qualification": "MBBS, MD Pediatrics",
+    "experienceYears": 8,
+    "phoneNumber": "9876543213", 
+    "email": "emily.davis@hospital.com",
+    "departmentId": 4,
+    "hospitalId": 1,
+    "active": true
+  },
+  {
+    "name": "Dr. Robert Wilson",
+    "specialization": "General Surgery",
+    "qualification": "MBBS, MS Surgery",
+    "experienceYears": 18,
+    "phoneNumber": "9876543214",
+    "email": "robert.wilson@hospital.com", 
+    "departmentId": 5,
+    "hospitalId": 1,
+    "active": true
+  }
+]

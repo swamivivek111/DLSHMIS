@@ -42,7 +42,11 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public UserDTO loginUser(UserDTO userDTO)throws UserException {
 		User user=userRepository.findByEmail(userDTO.getEmail()).orElseThrow(()->new UserException("USER_NOT_FOUND"));
-		//userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+		
+		if(!user.getActive()){
+			throw new UserException("USER_INACTIVE");
+		}
+		
 		if(!passwordEncoder.matches(userDTO.getPassword(), user.getPassword())){
 			throw new UserException("INVALID_CREDENTIALS");
 		}

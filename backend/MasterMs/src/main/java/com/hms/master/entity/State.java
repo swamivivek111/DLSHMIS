@@ -35,9 +35,15 @@ public class State {
         StateDTO dto = new StateDTO();
         dto.setStateId(stateId);
 
-        if (country != null) {
-            dto.setCountryId(country.getCountryId());
-            dto.setCountryName(country.getCountryName());
+        try {
+            if (country != null) {
+                dto.setCountryId(country.getCountryId());
+                dto.setCountryName(country.getCountryName());
+            }
+        } catch (Exception e) {
+            // Handle lazy loading exception
+            dto.setCountryId(null);
+            dto.setCountryName("Unknown");
         }
 
         dto.setStateName(stateName);

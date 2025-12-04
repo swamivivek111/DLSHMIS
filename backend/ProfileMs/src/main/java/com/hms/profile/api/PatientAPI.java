@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 
 
@@ -53,5 +54,11 @@ public class PatientAPI {
     @GetMapping("/getall")
     public ResponseEntity<List<PatientDTO>> getAllDoctors() throws HMSException {
         return new ResponseEntity(patientService.getAllPatients(), HttpStatus.OK);
+    }
+    
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deletePatient(@PathVariable Long id) throws HMSException {
+        patientService.deletePatient(id);
+        return new ResponseEntity<>("Patient deleted successfully", HttpStatus.OK);
     }
 }

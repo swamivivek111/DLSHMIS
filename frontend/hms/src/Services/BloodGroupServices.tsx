@@ -39,3 +39,24 @@ export const deleteBloodGroup=async(id: number)=>{
   .then((response:any) => response.data) // logs: It worked!
   .catch((error:any) => {throw error;}); // runs if reject()
 };
+
+export const getAllBloodGroups = async () => {
+  try {
+    const response = await axiosInstance.get('/master/bloodGroup/getall', {
+      params: { page: 0, limit: 1000, search: '' }
+    });
+    return response.data.bloodGroups || [];
+  } catch (error: any) {
+    console.error('Failed to load blood groups:', error);
+    return [];
+  }
+};
+
+export const BloodGroupServices = {
+  getAllBloodGroups,
+  getBloodGroup,
+  addBloodGroup,
+  updateBloodGroup,
+  getBloodGroupById,
+  deleteBloodGroup
+};

@@ -20,8 +20,10 @@ public class PatientServiceImpl implements PatientService{
 
     @Override
     public Long addPatient(PatientDTO patientDTO) throws HMSException {
+        if(patientDTO.getPrnNo()!=null && patientRepository.findByPrnNo(patientDTO.getPrnNo()).isPresent())throw new HMSException("PATIENT_ALREADY_EXISTS");
+        if(patientDTO.getAadharNumber()!=null && patientRepository.findByAadharNumber(patientDTO.getAadharNumber()).isPresent())throw new HMSException("PATIENT_ALREADY_EXISTS");
         if(patientDTO.getEmail()!=null && patientRepository.findByEmail(patientDTO.getEmail()).isPresent())throw new HMSException("PATIENT_ALREADY_EXISTS");
-        if(patientDTO.getAadharNo()!=null && patientRepository.findByAadharNo(patientDTO.getAadharNo()).isPresent())throw new HMSException("PATIENT_ALREADY_EXISTS");
+
         return patientRepository.save(patientDTO.toEntity()).getId();
     }
 
@@ -46,5 +48,11 @@ public class PatientServiceImpl implements PatientService{
         Iterable<Patient> iterablePatients = patientRepository.findAll();
         return StreamSupport.stream(iterablePatients.spliterator(), false)
         .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deletePatient(Long id) throws HMSException {
+        patientRepository.findById(id).orElseThrow(() -> new HMSException("PATIENT_NOT_FOUND"));
+        patientRepository.deleteById(id);
     }
 }

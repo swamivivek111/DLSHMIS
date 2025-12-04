@@ -7,8 +7,8 @@ export const getEmployee = async (page: number = 1, limit: number = 10, search: 
       params: { page, limit, search }
     });
     return {
-      data: response.data.employees,       // adjust based on your backend response
-      totalPages: response.data.totalPages,  // or use totalCount / limit depending on your API
+      data: response.data.employee || [],       // backend returns 'employee', not 'employees'
+      totalPages: response.data.totalPages || 1,
     };
   } catch (error: any) {
     throw error;

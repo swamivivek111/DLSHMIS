@@ -44,10 +44,15 @@ public class UserProfileRoleServiceImpl implements UserProfileRoleService{
 
     @Override
     public Long createUserProfileRole(UserProfileRoleDTO userProfileRoleDTO) {
-        UserProfileRole userProfileRole = userProfileRoleDTO.toEntity();
+        UserProfileRole userProfileRole = new UserProfileRole();
+        userProfileRole.setRoleName(userProfileRoleDTO.getRoleName());
+        userProfileRole.setDescription(userProfileRoleDTO.getDescription());
+        userProfileRole.setAccessLevel(userProfileRoleDTO.getAccessLevel());
+        userProfileRole.setCreatedBy(userProfileRoleDTO.getCreatedBy());
+        userProfileRole.setActive(userProfileRoleDTO.getActive());
         userProfileRole.setCreatedAt(LocalDateTime.now());
         userProfileRole = userProfileRoleRepository.save(userProfileRole);
-        return userProfileRole.toDTO().getRoleId();
+        return userProfileRole.getRoleId();
     }
 
     @Override

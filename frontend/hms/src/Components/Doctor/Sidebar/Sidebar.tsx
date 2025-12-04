@@ -50,7 +50,7 @@ const Sidebar = () => {
                 <div className='flex flex-col gap-1 items-center'>
                     {
                         links.map((link)=>{
-                            return <NavLink to={link.url} key={link.url} className={({isActive})=>`flex items-center gap-3 w-full h-16 font-medium px-4 px-5 rounded-lg text-light ${isActive?"bg-primary-400 text-dark":"hover:bg-gray-100 hover:text-dark"}`}>
+                            return <NavLink to={link.url} key={link.url} className={({isActive})=>`flex items-center gap-3 w-full h-16 font-medium px-4 px-5 rounded-lg text-light ${isActive?"bg-primary-400 text-dark":"hover:bg-gray-100 hover:text-gray-600"}`}>
                                 {link.icon}
                                 <span>{link.name}</span>
                             </NavLink>
