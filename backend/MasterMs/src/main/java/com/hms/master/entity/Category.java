@@ -9,21 +9,19 @@ public class Category {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id")
     private Long categoryId;
     
-    @Column(nullable = false, unique = true, length = 100)
-    private String categoryName;
-    
-    @Column(length = 50)
+    @Column(name = "category_code", nullable = false, length = 20)
     private String categoryCode;
     
-    @Column(length = 500)
+    @Column(name = "category_name", nullable = false, length = 100)
+    private String categoryName;
+    
+    @Column(name = "description", length = 255)
     private String description;
     
-    @Column(length = 50)
-    private String categoryType; // MEDICAL, ADMINISTRATIVE, BILLING, etc.
-    
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
     
     @Column(name = "created_at")
@@ -31,12 +29,6 @@ public class Category {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    
-    @Column(name = "created_by")
-    private String createdBy;
-    
-    @Column(name = "updated_by")
-    private String updatedBy;
     
     @PrePersist
     protected void onCreate() {
@@ -52,11 +44,10 @@ public class Category {
     // Constructors
     public Category() {}
     
-    public Category(String categoryName, String categoryCode, String description, String categoryType) {
+    public Category(String categoryName, String categoryCode, String description) {
         this.categoryName = categoryName;
         this.categoryCode = categoryCode;
         this.description = description;
-        this.categoryType = categoryType;
     }
     
     // Getters and Setters
@@ -72,9 +63,7 @@ public class Category {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     
-    public String getCategoryType() { return categoryType; }
-    public void setCategoryType(String categoryType) { this.categoryType = categoryType; }
-    
+
     public Boolean getIsActive() { return isActive; }
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
     
@@ -84,9 +73,5 @@ public class Category {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     
-    public String getCreatedBy() { return createdBy; }
-    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
-    
-    public String getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
+
 }

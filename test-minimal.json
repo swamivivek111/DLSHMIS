@@ -1,0 +1,7 @@
+{
+  "defaultTariffName": "General",
+  "serviceId": 1,
+  "serviceName": "Service 1121",
+  "corporateServiceName": "Test Service",
+  "isActive": true
+}

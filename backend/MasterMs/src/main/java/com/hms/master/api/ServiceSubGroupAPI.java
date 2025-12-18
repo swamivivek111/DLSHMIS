@@ -28,12 +28,21 @@ public class ServiceSubGroupAPI {
     }
     
     @PostMapping
-    public ResponseEntity<ServiceSubGroup> createServiceSubGroup(@RequestBody ServiceSubGroup serviceSubGroup) {
+    public ResponseEntity<?> createServiceSubGroup(@RequestBody ServiceSubGroup serviceSubGroup) {
         try {
             return ResponseEntity.ok(service.createServiceSubGroup(serviceSubGroup));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to create service sub group: " + e.getMessage(), e);
+            return ResponseEntity.badRequest().body(new ErrorResponse("Failed to create service sub group: " + e.getMessage()));
+        }
+    }
+    
+    private static class ErrorResponse {
+        public String errorMessage;
+        public ErrorResponse(String message) {
+            this.errorMessage = message;
         }
     }
     

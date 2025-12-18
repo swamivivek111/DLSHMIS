@@ -356,7 +356,7 @@ const RoomForm: React.FC = () => {
               size="md"
               variant="outline"
             >
-              {isEdit ? 'Update Room' : 'Create Room'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="outline"

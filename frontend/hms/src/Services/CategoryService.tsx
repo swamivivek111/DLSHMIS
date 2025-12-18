@@ -1,6 +1,21 @@
 import axiosInstance from "../Interceptor/AxiosInterceptor";
 
 export const CategoryService = {
+  getCategories: async (page: number = 1, limit: number = 10, search: string = '') => {
+    try {
+      page = page - 1;
+      const response = await axiosInstance.get('/master/categories/getall', {
+        params: { page, limit, search }
+      });
+      return {
+        data: response.data.categories,
+        totalPages: response.data.totalPages,
+      };
+    } catch (error: any) {
+      throw error;
+    }
+  },
+
   getAllCategories: async () => {
     const response = await axiosInstance.get('/master/categories');
     return response.data;

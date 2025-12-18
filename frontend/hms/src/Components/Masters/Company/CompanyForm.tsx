@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { addCompany, getCompanyById, updateCompany } from '../../../Services/CompanyServices';
+import { getPatientCategory } from '../../../Services/PatientCategoryServices';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 
 export default function CompanyForm() {
@@ -12,6 +13,7 @@ export default function CompanyForm() {
   const isEdit = !!id;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [patientCategories, setPatientCategories] = useState<any[]>([]);
 
   const form = useForm({
     initialValues: {
@@ -31,23 +33,39 @@ export default function CompanyForm() {
     validate: {
       companyName: v => (v.length < 2 ? 'Company name is required' : null),
       companyCode: v => (v.length < 1 ? 'Company code is required' : null),
-      companyType: v => (!v ? 'Company type is required' : null),
+      companyType: v => (!v ? 'Patient category is required' : null),
       email: v => (!v ? 'Email is required' : !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v) ? 'Invalid email' : null),
       phone: v => (!v ? 'Phone number is required' : !/^\d{10}$/.test(v) ? 'Invalid phone number' : null),
+      effectiveFrom: v => (!v ? 'Effective from date is required' : null),
+      effectiveTo: v => (!v ? 'Effective to date is required' : null),
       orgPercentage: v => (!v ? 'Organization percentage is required' : isNaN(Number(v)) || Number(v) < 0 || Number(v) > 100 ? 'Invalid percentage (0-100)' : null),
       empPercentage: v => (!v ? 'Employee percentage is required' : isNaN(Number(v)) || Number(v) < 0 || Number(v) > 100 ? 'Invalid percentage (0-100)' : null),
     },
   });
 
-  const companyTypeOptions = [
-    { value: 'Corporate', label: 'Corporate' },
-    { value: 'Insurance', label: 'Insurance' },
-    { value: 'TPA', label: 'TPA' },
-  ];
+  const loadPatientCategories = async () => {
+    try {
+      const response = await getPatientCategory(1, 100);
+      const options = response.data.map((category: any) => ({
+        value: category.categoryName,
+        label: category.categoryName
+      }));
+      setPatientCategories(options);
+    } catch {
+      errorNotification('Failed to load patient categories');
+    }
+  };
+
+  const generateCompanyCode = () => {
+    const timestamp = Date.now().toString();
+    const code = 'COMP' + timestamp.slice(-6);
+    form.setFieldValue('companyCode', code);
+  };
 
   useEffect(() => {
-    if (isEdit) {
-      (async () => {
+    const loadData = async () => {
+      await loadPatientCategories();
+      if (isEdit) {
         try {
           const data: any = await getCompanyById(Number(id));
           form.setValues({
@@ -58,8 +76,11 @@ export default function CompanyForm() {
         } catch {
           errorNotification('Company not found');
         }
-      })();
-    }
+      } else {
+        generateCompanyCode();
+      }
+    };
+    loadData();
   }, [id]);
 
   const handleSubmit = form.onSubmit(async (values: any) => {
@@ -106,12 +127,12 @@ export default function CompanyForm() {
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <TextInput label="Company Name" withAsterisk {...form.getInputProps('companyName')} />
-          <TextInput label="Company Code" withAsterisk {...form.getInputProps('companyCode')} />
+          <TextInput label="Company Code" readOnly {...form.getInputProps('companyCode')} />
           
           <Select
-            label="Company Type"
-            placeholder="Select company type"
-            data={companyTypeOptions}
+            label="Patient Category"
+            placeholder="Select patient category"
+            data={patientCategories}
             withAsterisk
             {...form.getInputProps('companyType')}
           />
@@ -122,12 +143,14 @@ export default function CompanyForm() {
           <DateInput
             label="Effective From"
             placeholder="Select effective from date"
+            withAsterisk
             {...form.getInputProps('effectiveFrom')}
           />
           
           <DateInput
             label="Effective To"
             placeholder="Select effective to date"
+            withAsterisk
             {...form.getInputProps('effectiveTo')}
           />
           
@@ -165,14 +188,14 @@ export default function CompanyForm() {
               className="bg-[#202A44] text-white hover:bg-[#1a2236]"
               loading={loading}
             >
-              {isEdit ? 'Update' : 'Create'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="subtle"
               onClick={() => navigate('/admin/mastersettings/companies')}
               className="bg-[#202A44] text-white hover:bg-[#1a2236]"
             >
-              Back
+              Cancel
             </Button>
           </div>
         </form>

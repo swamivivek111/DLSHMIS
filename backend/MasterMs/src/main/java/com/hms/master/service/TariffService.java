@@ -26,7 +26,20 @@ public class TariffService {
     }
     
     public Tariff createTariff(Tariff tariff) {
+        if (tariff.getTariffCode() == null || tariff.getTariffCode().isEmpty()) {
+            tariff.setTariffCode(generateNextTariffCode());
+        }
         return repository.save(tariff);
+    }
+    
+    public String getNextTariffCode() {
+        return generateNextTariffCode();
+    }
+    
+    private String generateNextTariffCode() {
+        Integer maxCode = repository.findMaxSequentialCode();
+        int nextCode = (maxCode != null) ? maxCode + 1 : 1;
+        return String.valueOf(nextCode);
     }
     
     public Tariff updateTariff(Long id, Tariff tariff) {
@@ -43,5 +56,17 @@ public class TariffService {
         } else {
             throw new RuntimeException("Tariff not found with id: " + id);
         }
+    }
+    
+    public List<Tariff> getTariffsByServiceCategory(String serviceCategory) {
+        return repository.findByServiceCategoryAndIsActiveTrue(serviceCategory);
+    }
+    
+    public List<Tariff> getTariffsByServiceName(String serviceName) {
+        return repository.findByServiceNameAndIsActiveTrue(serviceName);
+    }
+    
+    public List<Tariff> getTariffsByDepartment(String department) {
+        return repository.findByDepartmentAndIsActiveTrue(department);
     }
 }

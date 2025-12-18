@@ -60,7 +60,7 @@ const Header = ({ sidebarOpen, handleSidebarToggle }: HeaderProps) => {
   }, []);
 
   return (
-    <header className="bg-[#202A44] shadow-xl w-full h-16 flex justify-between items-center px-5">
+    <header className="bg-[#202A44] shadow-xl w-full h-16 flex justify-between items-center px-5 fixed top-0 left-0 z-50">
   <div className="flex items-center gap-2">
     {/* Toggle Button (Mobile + Desktop) */}
     <ActionIcon

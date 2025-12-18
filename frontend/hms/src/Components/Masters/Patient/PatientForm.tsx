@@ -347,7 +347,7 @@ const PatientForm: React.FC = () => {
               variant="outline"
               disabled={!form.isValid()}
             >
-              {isEdit ? 'Update Patient' : 'Register Patient'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button 
               variant="outline" 

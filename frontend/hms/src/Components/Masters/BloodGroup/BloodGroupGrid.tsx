@@ -40,7 +40,7 @@ export default function BloodGroupGrid() {
     >
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Blood Group Management</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Blood Group Master</h2>
           <Button
             leftSection={<IconPlus size={16} />}
             onClick={() => navigate('/admin/mastersettings/bloodGroups/add')}
@@ -53,6 +53,8 @@ export default function BloodGroupGrid() {
           data={bloodGroups}
           columns={[
             { key: 'bloodGroup', label: 'Blood Group' },
+            { key: 'active', label: 'Status', render: (value) => value ? 'Active' : 'Inactive' },
+            { key: 'createdBy', label: 'Created By' },
           ]}
           onView={(d) => navigate(`/admin/mastersettings/bloodGroups/view/${d.bloodGroupId}`)}
           onEdit={(d) => navigate(`/admin/mastersettings/bloodGroups/edit/${d.bloodGroupId}`)}

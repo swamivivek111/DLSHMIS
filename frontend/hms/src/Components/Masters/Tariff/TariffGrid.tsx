@@ -10,18 +10,11 @@ import ConfirmDialog from '../../Common/ConfirmDialog';
 
 interface Tariff {
   tariffId: number;
-  serviceName: string;
-  serviceCode: string;
+  tariffName: string;
+  tariffCode: string;
   description?: string;
-  basePrice: number;
-  discountPrice?: number;
-  serviceCategory: string;
-  department: string;
-  unit: string;
-  taxPercentage?: number;
-  isActive: boolean;
-  effectiveFrom?: string;
-  effectiveTo?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 const PAGE_SIZE = 10;
@@ -43,10 +36,9 @@ export default function TariffGrid() {
       // Filter by search
       const filteredTariffs = search 
         ? allTariffs.filter((tariff: Tariff) =>
-            tariff.serviceName?.toLowerCase().includes(search.toLowerCase()) ||
-            tariff.serviceCode?.toLowerCase().includes(search.toLowerCase()) ||
-            tariff.serviceCategory?.toLowerCase().includes(search.toLowerCase()) ||
-            tariff.department?.toLowerCase().includes(search.toLowerCase())
+            tariff.tariffName?.toLowerCase().includes(search.toLowerCase()) ||
+            tariff.tariffCode?.toLowerCase().includes(search.toLowerCase()) ||
+            tariff.description?.toLowerCase().includes(search.toLowerCase())
           )
         : allTariffs;
       
@@ -69,7 +61,7 @@ export default function TariffGrid() {
   const handleDelete = async (tariff: Tariff) => {
     try {
       await TariffService.deleteTariff(tariff.tariffId);
-      successNotification(`${tariff.serviceName} deleted successfully!`);
+      successNotification(`${tariff.tariffName} deleted successfully!`);
       fetchData();
     } catch {
       errorNotification('Failed to delete tariff');
@@ -85,7 +77,7 @@ export default function TariffGrid() {
     >
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Tariff Management</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Tariff Master</h2>
           <Button
             leftSection={<IconPlus size={16} />}
             onClick={() => navigate('/admin/mastersettings/tariffs/add')}
@@ -97,13 +89,10 @@ export default function TariffGrid() {
         <DataTable<Tariff>
         data={tariffs}
         columns={[
-          { key: 'serviceName', label: 'Service Name' },
-          { key: 'serviceCode', label: 'Service Code' },
-          { key: 'serviceCategory', label: 'Category', render: (row) => row.serviceCategory?.replace('_', ' ') },
-          { key: 'department', label: 'Department', render: (row) => row.department?.replace('_', ' ') },
-          { key: 'basePrice', label: 'Base Price', render: (row) => `₹${row.basePrice?.toFixed(2)}` },
-          { key: 'unit', label: 'Unit', render: (row) => row.unit?.replace('_', ' ') },
-          { key: 'isActive', label: 'Status', render: (row) => row.isActive ? 'Active' : 'Inactive' },
+          { key: 'tariffName', label: 'Tariff Name' },
+          { key: 'tariffCode', label: 'Tariff Code' },
+          { key: 'description', label: 'Description' },
+          { key: 'createdAt', label: 'Created At', render: (value: string) => value ? new Date(value).toLocaleDateString() : 'N/A' },
         ]}
         onView={(t) => navigate(`/admin/mastersettings/tariffs/view/${t.tariffId}`)}
         onEdit={(t) => navigate(`/admin/mastersettings/tariffs/edit/${t.tariffId}`)}
@@ -126,7 +115,7 @@ export default function TariffGrid() {
           }
         }}
         title="Delete Tariff"
-        message={`Are you sure you want to delete ${tariffToDelete?.serviceName} tariff? This action cannot be undone.`}
+        message={`Are you sure you want to delete ${tariffToDelete?.tariffName} tariff? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"
       />

@@ -41,6 +41,12 @@ export default function DepartmentForm() {
     loadData();
   }, []);
 
+  const generateDepartmentCode = () => {
+    const timestamp = Date.now().toString();
+    const code = 'DEPT' + timestamp.slice(-6);
+    form.setFieldValue('code', code);
+  };
+
   const loadData = async () => {
     try {
       // Load hospitals
@@ -54,6 +60,8 @@ export default function DepartmentForm() {
       // Load department data after dropdowns are populated
       if (isEdit && id) {
         setTimeout(() => loadDepartmentData(), 100);
+      } else {
+        generateDepartmentCode();
       }
     } catch {
       errorNotification('Failed to load data');
@@ -113,7 +121,7 @@ export default function DepartmentForm() {
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <TextInput label="Name" withAsterisk {...form.getInputProps('name')} />
-          <TextInput label="Code" withAsterisk {...form.getInputProps('code')} />
+          <TextInput label="Code" readOnly {...form.getInputProps('code')} />
           <TextInput label="Head of Department" {...form.getInputProps('headOfDepartment')} />
           <TextInput label="Contact Number" withAsterisk {...form.getInputProps('contactNumber')} />
           <TextInput label="Email" withAsterisk {...form.getInputProps('email')} />
@@ -139,14 +147,14 @@ export default function DepartmentForm() {
 
           <div className="xl:col-span-2 flex flex-wrap justify-end gap-2 mt-4">
             <Button type="submit" loading={loading} className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-              {isEdit ? 'Update' : 'Create'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="subtle"
               onClick={() => navigate('/admin/mastersettings/departments')}
               className="bg-[#202A44] text-white hover:bg-[#1a2236]"
             >
-              Back
+              Cancel
             </Button>
           </div>
         </form>

@@ -40,7 +40,7 @@ export default function TalukaGrid() {
     >
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Taluka Management</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Taluka Master</h2>
           <Button
             leftSection={<IconPlus size={16} />}
             onClick={() => navigate('/admin/mastersettings/talukas/add')}

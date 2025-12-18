@@ -12,6 +12,11 @@ export default function HospitalForm() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const generateHospitalCode = () => {
+    const timestamp = Date.now().toString().slice(-6);
+    return `HOS${timestamp}`;
+  };
+
   const form = useForm({
     initialValues: {
       hospitalCode: '',
@@ -38,7 +43,6 @@ export default function HospitalForm() {
       active: true,
     },
     validate: {
-      hospitalCode: v => (v.length < 1 ? 'Hospital Code is required' : null),
       hospitalName: v => (v.length < 2 ? 'Hospital Name is required' : null),
       emailId: v => (v && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v) ? 'Invalid email' : null),
       phoneNumber: v => (v && !/^\d{10}$/.test(v) ? 'Invalid phone number' : null),
@@ -55,6 +59,9 @@ export default function HospitalForm() {
           errorNotification('Hospital not found');
         }
       })();
+    } else {
+      // Auto-generate hospital code for new hospitals
+      form.setFieldValue('hospitalCode', generateHospitalCode());
     }
   }, [id]);
 
@@ -88,7 +95,7 @@ export default function HospitalForm() {
           {isEdit ? 'Edit Hospital' : 'Add Hospital'}
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <TextInput label="Hospital Code" withAsterisk {...form.getInputProps('hospitalCode')} />
+        <TextInput label="Hospital Code" readOnly {...form.getInputProps('hospitalCode')} />
         <TextInput label="Hospital Name" withAsterisk {...form.getInputProps('hospitalName')} />
         
         <Select
@@ -149,13 +156,13 @@ export default function HospitalForm() {
 
         <div className="xl:col-span-2 flex flex-wrap justify-end gap-2 mt-4">
           <Button type="submit" loading={loading} variant="outline">
-            {isEdit ? 'Update' : 'Create'}
+            {isEdit ? 'Update' : 'Save'}
           </Button>
           <Button
             variant="outline"
             onClick={() => navigate('/admin/mastersettings/hospitals')}
           >
-            Back
+            Cancel
           </Button>
         </div>
       </form>

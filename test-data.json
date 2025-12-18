@@ -1,0 +1,14 @@
+{
+  "defaultTariffName": "General",
+  "companyTariffCategoryId": 4,
+  "getServices": "MAPPED",
+  "serviceId": 1,
+  "serviceName": "Service 1121",
+  "corporateServiceName": "PENDING and MAPPED",
+  "qty": "100",
+  "baseRate": 1251,
+  "companyTariffRate": 1021,
+  "discountPerc": 1021,
+  "discountAmount": 1021,
+  "isActive": true
+}

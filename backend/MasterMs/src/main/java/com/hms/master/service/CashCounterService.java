@@ -41,7 +41,7 @@ public class CashCounterService {
         }
     }
     
-    public List<CashCounter> getCashCountersByType(CashCounter.CounterType counterType) {
+    public List<CashCounter> getCashCountersByType(String counterType) {
         return repository.findByCounterType(counterType);
     }
     

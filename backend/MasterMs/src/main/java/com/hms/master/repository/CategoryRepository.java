@@ -18,7 +18,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     
     Optional<Category> findByCategoryCodeAndIsActiveTrue(String categoryCode);
     
-    List<Category> findByCategoryTypeAndIsActiveTrue(String categoryType);
+
     
     @Query("SELECT c FROM Category c WHERE " +
            "(LOWER(c.categoryName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +

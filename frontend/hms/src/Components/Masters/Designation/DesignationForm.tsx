@@ -36,6 +36,12 @@ export default function DesignationForm() {
     loadData();
   }, []);
 
+  const generateDesignationCode = () => {
+    const timestamp = Date.now().toString();
+    const code = 'DESG' + timestamp.slice(-6);
+    form.setFieldValue('designationCode', code);
+  };
+
   const loadData = async () => {
     try {
       // Load hospitals
@@ -49,6 +55,8 @@ export default function DesignationForm() {
       // Load designation data after dropdowns are populated
       if (isEdit && id) {
         setTimeout(() => loadDesignationData(), 100);
+      } else {
+        generateDesignationCode();
       }
     } catch {
       errorNotification('Failed to load data');
@@ -116,7 +124,7 @@ export default function DesignationForm() {
             {...form.getInputProps('hospitalId')}
           />
           <TextInput label="Designation Name" withAsterisk {...form.getInputProps('designationName')} />
-          <TextInput label="Designation Code" withAsterisk {...form.getInputProps('designationCode')} />
+          <TextInput label="Designation Code" readOnly {...form.getInputProps('designationCode')} />
           <TextInput label="Created By" {...form.getInputProps('createdBy')} />
 
           <Textarea label="Description" {...form.getInputProps('description')} className="xl:col-span-2" />
@@ -132,14 +140,14 @@ export default function DesignationForm() {
 
           <div className="xl:col-span-2 flex flex-wrap justify-end gap-2 mt-4">
             <Button type="submit" loading={loading} className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-              {isEdit ? 'Update' : 'Create'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="subtle"
               onClick={() => navigate('/admin/mastersettings/designations')}
               className="bg-[#202A44] text-white hover:bg-[#1a2236]"
             >
-              Back
+              Cancel
             </Button>
           </div>
         </form>

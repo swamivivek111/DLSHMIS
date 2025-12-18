@@ -47,6 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public Long createEmployee(EmployeeDTO employeeDTO) {
         Employee employee = employeeDTO.toEntity();
+        employee.setEmployeeId(null); // Ensure ID is null for new employee
         employee.setCreatedAt(LocalDateTime.now()); 
         employee = employeeRepository.save(employee);
         return employee.toDTO().getEmployeeId();

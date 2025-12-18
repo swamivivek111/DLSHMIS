@@ -3,6 +3,7 @@ package com.hms.master.service;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,9 @@ public class AuthorityService {
 
     @Autowired
     private AuthorityRepository repository;
+    
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public Page<AuthorityDTO> getAllAuthorities(int page, int size, String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("authorityName").ascending());
@@ -56,9 +60,10 @@ public class AuthorityService {
         
         existing.setAuthorityCode(dto.getAuthorityCode());
         existing.setAuthorityName(dto.getAuthorityName());
-        existing.setApprovalLimit(dto.getApprovalLimit());
+
         existing.setIsActive(dto.getIsActive());
         existing.setCreatedBy(dto.getCreatedBy());
+        existing.setTransactions(dto.getTransactions());
         
         return repository.save(existing).toDTO();
     }

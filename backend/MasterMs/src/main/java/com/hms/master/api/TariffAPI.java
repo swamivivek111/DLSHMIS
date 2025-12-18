@@ -55,4 +55,29 @@ public class TariffAPI {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @GetMapping("/active")
+    public ResponseEntity<List<Tariff>> getActiveTariffs() {
+        return ResponseEntity.ok(service.getActiveTariffs());
+    }
+    
+    @GetMapping("/category/{serviceCategory}")
+    public ResponseEntity<List<Tariff>> getTariffsByServiceCategory(@PathVariable String serviceCategory) {
+        return ResponseEntity.ok(service.getTariffsByServiceCategory(serviceCategory));
+    }
+    
+    @GetMapping("/service/{serviceName}")
+    public ResponseEntity<List<Tariff>> getTariffsByServiceName(@PathVariable String serviceName) {
+        return ResponseEntity.ok(service.getTariffsByServiceName(serviceName));
+    }
+    
+    @GetMapping("/department/{department}")
+    public ResponseEntity<List<Tariff>> getTariffsByDepartment(@PathVariable String department) {
+        return ResponseEntity.ok(service.getTariffsByDepartment(department));
+    }
+    
+    @GetMapping("/next-code")
+    public ResponseEntity<String> getNextTariffCode() {
+        return ResponseEntity.ok(service.getNextTariffCode());
+    }
 }

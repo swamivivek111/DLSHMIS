@@ -1,45 +1,86 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Badge, Button } from '@mantine/core';
+import { Button, Badge } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 import DataTable from '../../DataTable/DataTable';
-import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 import { CategoryService } from '../../../Services/CategoryService';
+import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
+import ConfirmDialog from '../../Common/ConfirmDialog';
 
 interface Category {
   categoryId: number;
   categoryName: string;
   categoryCode: string;
   description: string;
-  categoryType: string;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
 
-const PAGE_SIZE = 10;
-
-export default function CategoryGrid() {
+const CategoryGrid: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchValue, setSearchValue] = useState('');
+  const [totalPages, setTotalPages] = useState(0);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const navigate = useNavigate();
 
-  const fetchData = async () => {
+  const columns = [
+    { key: 'categoryCode', label: 'Category Code' },
+    { key: 'categoryName', label: 'Category Name' },
+    { 
+      key: 'isActive', 
+      label: 'Status',
+      render: (row: Category) => (
+        <Badge color={row.isActive ? 'green' : 'red'}>
+          {row.isActive ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    },
+  ];
+
+  const fetchCategories = async () => {
+    setLoading(true);
     try {
-      const res = await CategoryService.getCategories(page, PAGE_SIZE, search);
-      setCategories(res.data || res);
-      setTotalPages(res.totalPages || Math.ceil((res.length || 0) / PAGE_SIZE));
-    } catch {
+      const response = await CategoryService.getCategories(currentPage, 10, searchValue);
+      setCategories(response.data || response);
+      setTotalPages(response.totalPages || Math.ceil((response.length || 0) / 10));
+    } catch (error) {
+      console.error('Error fetching categories:', error);
       errorNotification('Failed to load categories');
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, [page, search]);
+    fetchCategories();
+  }, [currentPage, searchValue]);
+
+  const handleAdd = () => {
+    navigate('/admin/mastersettings/categories/add');
+  };
+
+  const handleEdit = (category: Category) => {
+    navigate(`/admin/mastersettings/categories/edit/${category.categoryId}`);
+  };
+
+  const handleView = (category: Category) => {
+    navigate(`/admin/mastersettings/categories/view/${category.categoryId}`);
+  };
+
+  const handleDelete = async (category: Category) => {
+    try {
+      await CategoryService.deleteCategory(category.categoryId);
+      successNotification(`${category.categoryName} deleted successfully!`);
+      fetchCategories();
+    } catch (error) {
+      errorNotification('Failed to delete category');
+    }
+  };
 
   return (
     <motion.div
@@ -50,55 +91,54 @@ export default function CategoryGrid() {
     >
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Category Management</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Category Master</h2>
           <Button
             leftSection={<IconPlus size={16} />}
-            onClick={() => navigate('/admin/mastersettings/categories/add')}
+            onClick={handleAdd}
           >
             Add Category
           </Button>
         </div>
 
-        <DataTable<Category>
+        <DataTable
           data={categories}
-          columns={[
-            { key: 'categoryName', label: 'Category Name' },
-            { key: 'categoryCode', label: 'Code' },
-            { 
-              key: 'categoryType', 
-              label: 'Type',
-              render: (category: Category) => (
-                <Badge variant="light" color="blue">
-                  {category.categoryType}
-                </Badge>
-              )
-            },
-            { key: 'description', label: 'Description' },
-            { 
-              key: 'isActive', 
-              label: 'Status',
-              render: (category: Category) => (
-                <Badge color={category.isActive ? 'green' : 'red'}>
-                  {category.isActive ? 'Active' : 'Inactive'}
-                </Badge>
-              )
-            },
-          ]}
-          onView={(c) => navigate(`/admin/mastersettings/categories/view/${c.categoryId}`)}
-          onEdit={(c) => navigate(`/admin/mastersettings/categories/edit/${c.categoryId}`)}
-          onDelete={async (c) => {
-            if (confirm('Delete '+c.categoryName+' category?')) {
-              await CategoryService.deleteCategory(c.categoryId);
-              successNotification(c.categoryName+' category deleted successfully!');
-              fetchData();
-            }
+          columns={columns}
+          onEdit={handleEdit}
+          onDelete={(c) => {
+            setCategoryToDelete(c);
+            setDeleteConfirmOpen(true);
           }}
-          onAdd={() => navigate('/admin/mastersettings/categories/add')}
+          onView={handleView}
+
+          pagination={{
+            page: currentPage,
+            total: totalPages,
+            onPageChange: setCurrentPage,
+          }}
+          search={{
+            value: searchValue,
+            onChange: setSearchValue,
+          }}
+          loading={loading}
           canExport
-          pagination={{ page, total: totalPages, onPageChange: setPage }}
-          search={{ value: search, onChange: setSearch }}
         />
       </div>
+      
+      <ConfirmDialog
+        opened={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={async () => {
+          if (categoryToDelete) {
+            await handleDelete(categoryToDelete);
+          }
+        }}
+        title="Delete Category"
+        message={`Are you sure you want to delete ${categoryToDelete?.categoryName}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </motion.div>
   );
-}
+};
+
+export default CategoryGrid;

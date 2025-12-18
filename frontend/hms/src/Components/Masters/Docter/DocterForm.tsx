@@ -63,11 +63,21 @@ export default function DoctorForm() {
   const [districts, setDistricts] = useState<{ value: string; label: string }[]>([]);
 
   const [loading, setLoading]=useState(false);
+
+  const generateDoctorCode = () => {
+    const timestamp = Date.now().toString();
+    const code = 'DOC' + timestamp.slice(-6);
+    form.setFieldValue('code', code);
+  };
+
   useEffect(() => {
     loadHospitals();
     loadDepartments();
     loadCities();
     loadDistricts();
+    if (!isEdit) {
+      generateDoctorCode();
+    }
   }, []);
 
   const loadHospitals = async () => {
@@ -225,7 +235,7 @@ export default function DoctorForm() {
           {isEdit ? 'Edit Doctor' : 'Add Doctor'}
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-        <TextInput label="Code" withAsterisk {...form.getInputProps('code')} />
+        <TextInput label="Code" readOnly {...form.getInputProps('code')} />
         <TextInput label="Type" {...form.getInputProps('type')} />
         <TextInput label="Name" {...form.getInputProps('name')} />
         <TextInput label="Specialization" withAsterisk {...form.getInputProps('specialization')} />
@@ -293,14 +303,14 @@ export default function DoctorForm() {
 
         <div className="xl:col-span-2 flex flex-wrap justify-end gap-2 mt-4">
           <Button type="submit" className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-            {isEdit ? 'Update' : 'Create'}
+            {isEdit ? 'Update' : 'Save'}
           </Button>
           <Button
             variant="subtle"
             onClick={() => navigate('/admin/mastersettings/doctors')}
             className="bg-[#202A44] text-white hover:bg-[#1a2236]"
           >
-            Back
+            Cancel
           </Button>
         </div>
       </form>

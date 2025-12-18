@@ -24,8 +24,7 @@ public class Authority {
     @Column(name = "authority_name")
     private String authorityName;
     
-    @Column(name = "approval_limit")
-    private String approvalLimit;
+
     
     @Column(name = "is_active")
     private Boolean isActive = true;
@@ -38,6 +37,9 @@ public class Authority {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @Column(name = "transactions", columnDefinition = "JSON")
+    private String transactions;
 
     @PrePersist
     protected void onCreate() {
@@ -51,7 +53,7 @@ public class Authority {
     }
 
     public AuthorityDTO toDTO() {
-        return new AuthorityDTO(authorityId, authorityCode, authorityName, approvalLimit, 
-                              isActive, createdBy, createdAt, updatedAt);
+        return new AuthorityDTO(authorityId, authorityCode, authorityName, 
+                              isActive, createdBy, createdAt, updatedAt, transactions);
     }
 }

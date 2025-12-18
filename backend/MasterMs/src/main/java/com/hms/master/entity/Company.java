@@ -36,9 +36,8 @@ public class Company {
     @Column(name = "company_name")
     private String companyName;
     
-    @Enumerated(EnumType.STRING)
     @Column(name = "company_type")
-    private CompanyType companyType;
+    private String companyType;
     
     private String address;
     private String email;
@@ -65,9 +64,7 @@ public class Company {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public enum CompanyType {
-        Corporate, Insurance, TPA
-    }
+
 
     @PrePersist
     protected void onCreate() {

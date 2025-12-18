@@ -1,0 +1,13 @@
+{
+  "defaultTariffName": "General",
+  "getServices": "MAPPED",
+  "serviceId": 1,
+  "serviceName": "Service 1121",
+  "corporateServiceName": "Test Service",
+  "qty": "1",
+  "baseRate": 100.00,
+  "companyTariffRate": 90.00,
+  "discountPerc": 10.00,
+  "discountAmount": 10.00,
+  "isActive": true
+}

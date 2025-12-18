@@ -65,7 +65,6 @@ export default function ServiceMasterForm() {
       isDoctorRequired: false,
       isTreatmentRoom: false,
       isDoctorShareRequired: false,
-      status: 'Active',
     },
     validate: {
       serviceName: (value) => (!value ? 'Service name is required' : null),
@@ -103,16 +102,17 @@ export default function ServiceMasterForm() {
     try {
       setLoading(true);
       const service = await ServiceMasterService.getServiceById(Number(id));
+      const { status, ...serviceData } = service;
       form.setValues({
-        ...service,
-        serviceGroupId: service.serviceGroupId?.toString() || '',
-        serviceSubGroupId: service.serviceSubGroupId?.toString() || '',
-        serviceClassId: service.serviceClassId?.toString() || '',
-        billingHeadId: service.billingHeadId?.toString() || '',
-        wardGroupNameId: service.wardGroupNameId?.toString() || '',
-        taxId: service.taxId?.toString() || '',
-        effectFrom: service.effectFrom ? new Date(service.effectFrom) : null,
-        effectTo: service.effectTo ? new Date(service.effectTo) : null,
+        ...serviceData,
+        serviceGroupId: serviceData.serviceGroupId?.toString() || '',
+        serviceSubGroupId: serviceData.serviceSubGroupId?.toString() || '',
+        serviceClassId: serviceData.serviceClassId?.toString() || '',
+        billingHeadId: serviceData.billingHeadId?.toString() || '',
+        wardGroupNameId: serviceData.wardGroupNameId?.toString() || '',
+        taxId: serviceData.taxId?.toString() || '',
+        effectFrom: serviceData.effectFrom ? new Date(serviceData.effectFrom) : null,
+        effectTo: serviceData.effectTo ? new Date(serviceData.effectTo) : null,
       });
     } catch {
       errorNotification('Failed to load service');
@@ -125,14 +125,15 @@ export default function ServiceMasterForm() {
   const handleSubmit = async (values: any) => {
     try {
       setLoading(true);
+      const { status, ...formData } = values;
       const submitData = {
-        ...values,
-        serviceGroupId: values.serviceGroupId ? Number(values.serviceGroupId) : null,
-        serviceSubGroupId: values.serviceSubGroupId ? Number(values.serviceSubGroupId) : null,
-        serviceClassId: values.serviceClassId ? Number(values.serviceClassId) : null,
-        billingHeadId: values.billingHeadId ? Number(values.billingHeadId) : null,
-        wardGroupNameId: values.wardGroupNameId ? Number(values.wardGroupNameId) : null,
-        taxId: values.taxId ? Number(values.taxId) : null,
+        ...formData,
+        serviceGroupId: formData.serviceGroupId ? Number(formData.serviceGroupId) : null,
+        serviceSubGroupId: formData.serviceSubGroupId ? Number(formData.serviceSubGroupId) : null,
+        serviceClassId: formData.serviceClassId ? Number(formData.serviceClassId) : null,
+        billingHeadId: formData.billingHeadId ? Number(formData.billingHeadId) : null,
+        wardGroupNameId: formData.wardGroupNameId ? Number(formData.wardGroupNameId) : null,
+        taxId: formData.taxId ? Number(formData.taxId) : null,
       };
       
       if (isEdit) {
@@ -163,16 +164,9 @@ export default function ServiceMasterForm() {
         </h2>
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Tabs defaultValue="basic">
-            <Tabs.List>
-              <Tabs.Tab value="basic">Basic Info</Tabs.Tab>
-              <Tabs.Tab value="opd">OPD Pricing</Tabs.Tab>
-              <Tabs.Tab value="ipd">IPD Pricing</Tabs.Tab>
-              <Tabs.Tab value="additional">Additional</Tabs.Tab>
-              <Tabs.Tab value="options">Options</Tabs.Tab>
-            </Tabs.List>
-
-            <Tabs.Panel value="basic" className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-4">Basic Info</h3>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
               <TextInput label="Service Name" withAsterisk {...form.getInputProps('serviceName')} />
               <TextInput label="Display Name" {...form.getInputProps('displayName')} />
               <Select label="Service Group" data={serviceGroups} searchable {...form.getInputProps('serviceGroupId')} />
@@ -184,10 +178,12 @@ export default function ServiceMasterForm() {
               <Select label="Billing Head" data={billingHeads} searchable {...form.getInputProps('billingHeadId')} />
               <DateInput label="Effect From" {...form.getInputProps('effectFrom')} />
               <DateInput label="Effect To" {...form.getInputProps('effectTo')} />
-              <Select label="Status" data={[{ value: 'Active', label: 'Active' }, { value: 'Inactive', label: 'Inactive' }]} {...form.getInputProps('status')} />
-            </Tabs.Panel>
+            </div>
+          </div>
 
-            <Tabs.Panel value="opd" className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-4">OPD Pricing</h3>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
               <NumberInput label="OPD Service Price" {...form.getInputProps('opdServicePrice')} />
               <NumberInput label="OPD Emergency Price" {...form.getInputProps('opdEmergencyPrice')} />
               <NumberInput label="OPD Hospital Share %" {...form.getInputProps('opdHospitalSharePct')} />
@@ -195,28 +191,42 @@ export default function ServiceMasterForm() {
               <NumberInput label="OPD Hospital Emergency Price" {...form.getInputProps('opdHospitalEmergencyPrice')} />
               <NumberInput label="OPD Doctor Price" {...form.getInputProps('opdDoctorPrice')} />
               <NumberInput label="OPD Doctor Share %" {...form.getInputProps('opdDoctorSharePct')} />
-            </Tabs.Panel>
+            </div>
+          </div>
 
-            <Tabs.Panel value="ipd" className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-4">IPD Pricing</h3>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
               <Select label="Ward Group" data={wardGroups} searchable {...form.getInputProps('wardGroupNameId')} />
               <NumberInput label="IPD Normal Price" {...form.getInputProps('ipdNormalPrice')} />
               <NumberInput label="IPD Doctor Share Price" {...form.getInputProps('ipdDoctorSharePrice')} />
               <NumberInput label="IPD Emergency Price" {...form.getInputProps('ipdEmergencyPrice')} />
               <NumberInput label="IPD Doctor Share %" {...form.getInputProps('ipdDoctorShare')} />
-            </Tabs.Panel>
+            </div>
+          </div>
 
-            <Tabs.Panel value="additional" className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">
-              <TextInput label="Universal Code" {...form.getInputProps('universalCode')} />
-              <Checkbox label="Is Having Universal Code" {...form.getInputProps('isHavingUniversalCode', { type: 'checkbox' })} />
-              <NumberInput label="Min Amount" {...form.getInputProps('minAmt')} />
-              <NumberInput label="Max Amount" {...form.getInputProps('maxAmt')} />
-              <Checkbox label="Is Price Caps" {...form.getInputProps('isPriceCaps', { type: 'checkbox' })} />
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-4">Additional</h3>
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+              <div>
+                <TextInput label="Universal Code" {...form.getInputProps('universalCode')} />
+                <Checkbox label="Is Having Universal Code" {...form.getInputProps('isHavingUniversalCode', { type: 'checkbox' })} className="mt-2" />
+              </div>
+              <div>
+                <NumberInput label="Min Amount" {...form.getInputProps('minAmt')} />
+              </div>
+              <div>
+                <NumberInput label="Max Amount" {...form.getInputProps('maxAmt')} />
+                <Checkbox label="Is Price Caps" {...form.getInputProps('isPriceCaps', { type: 'checkbox' })} className="mt-2" />
+              </div>
               <TextInput label="Tax ID" {...form.getInputProps('taxId')} />
               <NumberInput label="Tax Percentage" {...form.getInputProps('taxPercentage')} />
-              <Checkbox label="Is Active" {...form.getInputProps('isActive', { type: 'checkbox' })} />
-            </Tabs.Panel>
+            </div>
+          </div>
 
-            <Tabs.Panel value="options" className="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold mb-4">Options</h3>
+            <div className="space-y-4">
               <Checkbox label="Is Quantity Editable" {...form.getInputProps('isQtyEditable', { type: 'checkbox' })} />
               <Checkbox label="Is Diet" {...form.getInputProps('isDiet', { type: 'checkbox' })} />
               <Checkbox label="Is Non-Consumable Required" {...form.getInputProps('isNonConsumableRequired', { type: 'checkbox' })} />
@@ -226,15 +236,19 @@ export default function ServiceMasterForm() {
               <Checkbox label="Is Doctor Required" {...form.getInputProps('isDoctorRequired', { type: 'checkbox' })} />
               <Checkbox label="Treatment Room Procedure" {...form.getInputProps('isTreatmentRoom', { type: 'checkbox' })} />
               <Checkbox label="Is Doctor Share Required" {...form.getInputProps('isDoctorShareRequired', { type: 'checkbox' })} />
-            </Tabs.Panel>
-          </Tabs>
+            </div>
+          </div>
+
+          <div className="flex justify-center mb-6">
+            <Checkbox label="Is Active" {...form.getInputProps('isActive', { type: 'checkbox' })} />
+          </div>
 
           <div className="flex justify-end gap-2 mt-6">
             <Button type="submit" loading={loading} className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-              {isEdit ? 'Update' : 'Create'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button variant="subtle" onClick={() => navigate('/admin/mastersettings/services')} className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-              Back
+              Cancel
             </Button>
           </div>
         </form>

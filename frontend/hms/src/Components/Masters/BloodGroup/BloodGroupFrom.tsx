@@ -122,7 +122,7 @@ export default function BloodGroupForm() {
 
           <div className="xl:col-span-2 flex flex-wrap justify-end gap-2 mt-4">
             <Button type="submit" loading={loading} className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-              {isEdit ? 'Update' : 'Create'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="subtle"

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Title } from '@mantine/core';
 import DoctorSelector from './DoctorSelector';
 import AppointmentSlotSelector from './AppointmentSlotSelector';
 import AppointmentPatientRegistration from './AppointmentPatientRegistration';
@@ -126,12 +127,11 @@ const BookAppointment = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-center text-2xl font-semibold text-white bg-[#1e2a49] py-4 rounded-t-lg">
+    <div>
+      <Title order={2} className="text-gray-800 mb-6">
         Book Appointment
-      </h1>
-
-      <div className="bg-white p-6 rounded-b-lg shadow-md">
+      </Title>
+      <div className="bg-white p-6 shadow-md">
         {!showForm ? (
           <>
             <div className="flex justify-between items-center mb-4">

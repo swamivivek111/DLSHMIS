@@ -84,7 +84,7 @@ export default function CompanyView() {
           
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <Text>
-              <strong>Company Type:</strong> <Badge color="blue" variant="light">{company.companyType}</Badge>
+              <strong>Patient Category:</strong> <Badge color="blue" variant="light">{company.companyType}</Badge>
             </Text>
           </Grid.Col>
           

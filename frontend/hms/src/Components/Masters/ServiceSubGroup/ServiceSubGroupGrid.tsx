@@ -6,7 +6,7 @@ import { IconPlus } from '@tabler/icons-react';
 import DataTable from '../../DataTable/DataTable';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 import { ServiceSubGroupService } from '../../../Services/ServiceSubGroupService';
-import { WardGroupService } from '../../../Services/WardGroupService';
+import { ServiceGroupService } from '../../../Services/ServiceGroupService';
 import ConfirmDialog from '../../Common/ConfirmDialog';
 
 interface ServiceSubGroup {
@@ -27,17 +27,17 @@ export default function ServiceSubGroupGrid() {
   const [search, setSearch] = useState('');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [serviceSubGroupToDelete, setServiceSubGroupToDelete] = useState<ServiceSubGroup | null>(null);
-  const [wardGroups, setWardGroups] = useState<{ [key: number]: string }>({});
+  const [serviceGroups, setServiceGroups] = useState<{ [key: number]: string }>({});
   const navigate = useNavigate();
 
-  const loadWardGroups = async () => {
+  const loadServiceGroups = async () => {
     try {
-      const groups = await WardGroupService.getAllWardGroups();
+      const groups = await ServiceGroupService.getAllServiceGroups();
       const groupMap: { [key: number]: string } = {};
       groups.forEach((group: any) => {
-        groupMap[group.wardGroupId] = group.wardGroupName;
+        groupMap[group.groupId] = group.groupName;
       });
-      setWardGroups(groupMap);
+      setServiceGroups(groupMap);
     } catch {
       // Ignore error, will show ID instead
     }
@@ -67,7 +67,7 @@ export default function ServiceSubGroupGrid() {
   };
 
   useEffect(() => {
-    loadWardGroups();
+    loadServiceGroups();
     fetchData();
   }, [page, search]);
 
@@ -90,7 +90,7 @@ export default function ServiceSubGroupGrid() {
     >
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Service Sub Group Management</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Service Sub Group Master</h2>
           <Button
             leftSection={<IconPlus size={16} />}
             onClick={() => navigate('/admin/mastersettings/service-sub-groups/add')}
@@ -102,7 +102,7 @@ export default function ServiceSubGroupGrid() {
         <DataTable<ServiceSubGroup>
         data={serviceSubGroups}
         columns={[
-          { key: 'groupId', label: 'Group', render: (row) => wardGroups[row.groupId] || `ID: ${row.groupId}` },
+          { key: 'groupId', label: 'Group', render: (row) => serviceGroups[row.groupId] || `ID: ${row.groupId}` },
           { key: 'subGroupName', label: 'Sub Group Name' },
           { key: 'status', label: 'Status' },
           { key: 'createdAt', label: 'Created At', render: (row) => new Date(row.createdAt).toLocaleDateString() },

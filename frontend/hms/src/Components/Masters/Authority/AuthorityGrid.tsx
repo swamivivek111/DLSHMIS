@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Title } from '@mantine/core';
+import { Title, Badge } from '@mantine/core';
 import { Authority } from '../../Types/Authority';
 import DataTable from '../../DataTable/DataTable';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
@@ -35,14 +35,22 @@ export default function AuthorityGrid() {
   return (
     <div>
       <Title order={2} className="text-gray-800 mb-6">
-        Authority Management
+        Authority Master
       </Title>
       <DataTable<Authority>
         data={authorities}
         columns={[
           { key: 'authorityName', label: 'Authority Name' },
           { key: 'authorityCode', label: 'Code' },
-          { key: 'approvalLimit', label: 'Approval Limit' },
+          { 
+            key: 'isActive', 
+            label: 'Status',
+            render: (authority: Authority) => (
+              <Badge color={authority.isActive ? 'green' : 'red'}>
+                {authority.isActive ? 'Active' : 'Inactive'}
+              </Badge>
+            )
+          },
         ]}
         onView={(a) => navigate(`/admin/mastersettings/authorities/view/${a.authorityId}`)}
         onEdit={(a) => navigate(`/admin/mastersettings/authorities/edit/${a.authorityId}`)}

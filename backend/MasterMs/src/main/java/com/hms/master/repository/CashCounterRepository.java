@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface CashCounterRepository extends JpaRepository<CashCounter, Long> {
-    List<CashCounter> findByCounterType(CashCounter.CounterType counterType);
+    List<CashCounter> findByCounterType(String counterType);
     List<CashCounter> findByCounterNameContainingIgnoreCase(String counterName);
     boolean existsByCounterName(String counterName);
     boolean existsBySystemName(String systemName);

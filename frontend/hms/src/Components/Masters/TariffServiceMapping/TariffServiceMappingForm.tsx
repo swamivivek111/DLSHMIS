@@ -15,6 +15,7 @@ export default function TariffServiceMappingForm() {
   const [services, setServices] = useState<any[]>([]);
   const [tariffs, setTariffs] = useState<any[]>([]);
   const [selectedService, setSelectedService] = useState<any>(null);
+  const [showSubOptions, setShowSubOptions] = useState(false);
   const isEdit = Boolean(id);
 
   const form = useForm({
@@ -47,13 +48,22 @@ export default function TariffServiceMappingForm() {
 
   const loadMasterData = async () => {
     try {
-      const [servicesData, tariffsData] = await Promise.all([
+      const [servicesData, tariffsResponse] = await Promise.all([
         ServiceMasterService.getAllServices(),
         TariffService.getAllTariffs()
       ]);
 
+      const tariffsData = tariffsResponse.tariffs || [];
       setServices(servicesData.map((s: any) => ({ value: s.tariffId.toString(), label: s.serviceName, data: s })));
       setTariffs(tariffsData.map((t: any) => ({ value: t.tariffId.toString(), label: t.tariffName })));
+      
+      // Set default tariff name to General if not editing
+      if (!isEdit) {
+        const generalTariff = tariffsData.find((t: any) => t.tariffName?.toLowerCase().includes('general'));
+        if (generalTariff) {
+          form.setFieldValue('defaultTariffName', generalTariff.tariffName);
+        }
+      }
     } catch {
       errorNotification('Failed to load master data');
     }
@@ -80,12 +90,12 @@ export default function TariffServiceMappingForm() {
     const service = services.find(s => s.value === serviceId);
     if (service) {
       setSelectedService(service.data);
-      form.setValues({
-        ...form.values,
-        serviceId,
-        serviceName: service.data.serviceName,
-        baseRate: service.data.opdServicePrice || 0,
-      });
+      form.setFieldValue('serviceId', serviceId);
+      form.setFieldValue('serviceName', service.data.serviceName);
+      // Only set baseRate if it's currently 0 (not manually entered)
+      if (form.values.baseRate === 0) {
+        form.setFieldValue('baseRate', service.data.opdServicePrice || 0);
+      }
     }
   };
 
@@ -96,6 +106,10 @@ export default function TariffServiceMappingForm() {
         ...values,
         serviceId: Number(values.serviceId),
         companyTariffCategoryId: values.companyTariffCategoryId ? Number(values.companyTariffCategoryId) : null,
+        baseRate: Number(values.baseRate) || 0,
+        companyTariffRate: Number(values.companyTariffRate) || 0,
+        discountPerc: Number(values.discountPerc) || 0,
+        discountAmount: Number(values.discountAmount) || 0,
       };
       
       if (isEdit) {
@@ -106,8 +120,10 @@ export default function TariffServiceMappingForm() {
         successNotification('Tariff service mapping created successfully!');
       }
       navigate('/admin/mastersettings/tariff-service-mappings');
-    } catch {
-      errorNotification(`Failed to ${isEdit ? 'update' : 'create'} tariff service mapping`);
+    } catch (error: any) {
+      console.error('Submit error:', error);
+      const errorMsg = error.response?.data?.message || error.message || `Failed to ${isEdit ? 'update' : 'create'} tariff service mapping`;
+      errorNotification(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -128,7 +144,6 @@ export default function TariffServiceMappingForm() {
         <form onSubmit={form.onSubmit(handleSubmit)} className="grid grid-cols-1 xl:grid-cols-3 gap-4">
           <TextInput 
             label="Default Tariff Name" 
-            value="GENERAL / CASH"
             readOnly
             {...form.getInputProps('defaultTariffName')} 
           />
@@ -141,15 +156,31 @@ export default function TariffServiceMappingForm() {
             {...form.getInputProps('companyTariffCategoryId')}
           />
 
-          <Radio.Group
-            label="Get Services"
-            {...form.getInputProps('getServices')}
-          >
+          <div>
+            <label className="text-sm font-medium mb-2 block">Get Services</label>
             <Group mt="xs">
-              <Radio value="GET" label="GET" />
-              <Radio value="PENDING" label="PENDING" />
+              <Radio 
+                value="GET" 
+                label="GET" 
+                checked={showSubOptions}
+                onChange={() => setShowSubOptions(true)}
+              />
+              <Radio 
+                value="PENDING" 
+                label="PENDING" 
+                disabled={!showSubOptions}
+                checked={form.values.getServices === 'PENDING'}
+                onChange={() => form.setFieldValue('getServices', 'PENDING')}
+              />
+              <Radio 
+                value="MAPPED" 
+                label="MAPPED" 
+                disabled={!showSubOptions}
+                checked={form.values.getServices === 'MAPPED'}
+                onChange={() => form.setFieldValue('getServices', 'MAPPED')}
+              />
             </Group>
-          </Radio.Group>
+          </div>
 
           <Select
             label="Service"
@@ -180,7 +211,6 @@ export default function TariffServiceMappingForm() {
 
           <NumberInput 
             label="Base Rate (Original)" 
-            readOnly
             {...form.getInputProps('baseRate')} 
           />
 
@@ -206,14 +236,14 @@ export default function TariffServiceMappingForm() {
 
           <div className="xl:col-span-3 flex justify-end gap-2 mt-4">
             <Button type="submit" loading={loading} className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-              {isEdit ? 'Update' : 'Create'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="subtle"
               onClick={() => navigate('/admin/mastersettings/tariff-service-mappings')}
               className="bg-[#202A44] text-white hover:bg-[#1a2236]"
             >
-              Back
+              Cancel
             </Button>
           </div>
         </form>

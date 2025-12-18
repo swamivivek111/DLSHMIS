@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DataTable from '../DataTable/DataTable';
 import { errorNotification, successNotification } from '../../Utility/NotificationUtil';
-import { Badge } from '@mantine/core';
+import { Badge, Button, Modal, Stack, Group, Text, ActionIcon } from '@mantine/core';
+import { IconStethoscope } from '@tabler/icons-react';
 import ConfirmDialog from '../Common/ConfirmDialog';
 import { OPDPatientRegistrationService } from '../../Services/OPDPatientRegistrationService';
 import { getCity } from '../../Services/CityServices';
+import TreatmentModal from './TreatmentModal';
 
 interface PatientRegistration {
   id: number;
@@ -30,6 +32,8 @@ export default function OPDPatientRegistrationGrid() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [registrationToDelete, setRegistrationToDelete] = useState<PatientRegistration | null>(null);
   const [cities, setCities] = useState<any[]>([]);
+  const [treatmentModalOpen, setTreatmentModalOpen] = useState(false);
+  const [selectedPatientForTreatment, setSelectedPatientForTreatment] = useState<PatientRegistration | null>(null);
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -195,6 +199,17 @@ export default function OPDPatientRegistrationGrid() {
 
   return (
     <>
+      <style>
+        {`
+          .mantine-ActionIcon-root {
+            opacity: 1 !important;
+            visibility: visible !important;
+          }
+          .mantine-Table-tr:hover .mantine-ActionIcon-root {
+            opacity: 1 !important;
+          }
+        `}
+      </style>
       <DataTable<PatientRegistration>
         data={registrations}
         columns={[
@@ -213,6 +228,30 @@ export default function OPDPatientRegistrationGrid() {
             render: (row) => cities.find(c => c.cityId === row.cityId)?.cityName || 'N/A'
           },
           { key: 'email', label: 'Email' },
+          {
+            key: 'actions',
+            label: 'Actions',
+            render: (row) => (
+              <Group gap={4} justify="center">
+                <ActionIcon
+                  color="green"
+                  variant="filled"
+                  onClick={() => {
+                    setSelectedPatientForTreatment(row);
+                    setTreatmentModalOpen(true);
+                  }}
+                  title="Treat Patient"
+                  style={{ 
+                    backgroundColor: '#28a745',
+                    opacity: 1,
+                    visibility: 'visible'
+                  }}
+                >
+                  <IconStethoscope size={16} />
+                </ActionIcon>
+              </Group>
+            )
+          }
         ]}
         onView={(r) => navigate(`/admin/opd/registration/view/${r.id}`)}
         onEdit={(r) => navigate(`/admin/opd/registration/edit/${r.id}`)}
@@ -238,6 +277,15 @@ export default function OPDPatientRegistrationGrid() {
         message={`Are you sure you want to delete the registration for ${registrationToDelete?.firstName} ${registrationToDelete?.lastName}?`}
         confirmText="Delete Registration"
         cancelText="Keep Registration"
+      />
+      
+      <TreatmentModal
+        opened={treatmentModalOpen}
+        onClose={() => {
+          setTreatmentModalOpen(false);
+          setSelectedPatientForTreatment(null);
+        }}
+        patient={selectedPatientForTreatment}
       />
     </>
   );

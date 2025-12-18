@@ -12,6 +12,11 @@ export default function PatientCategoryForm() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  const generateCategoryCode = () => {
+    const timestamp = Date.now().toString().slice(-6);
+    return `CAT${timestamp}`;
+  };
+
   const form = useForm({
     initialValues: {
       categoryId: '',
@@ -23,7 +28,6 @@ export default function PatientCategoryForm() {
     },
     validate: {
       categoryName: v => (v.length < 2 ? 'Category name is required' : null),
-      categoryCode: v => (v.length < 1 ? 'Category code is required' : null),
       discountPercentage: v => (v < 0 || v > 100 ? 'Discount must be between 0-100%' : null),
     },
   });
@@ -38,6 +42,9 @@ export default function PatientCategoryForm() {
           errorNotification('Category not found');
         }
       })();
+    } else {
+      // Auto-generate category code for new categories
+      form.setFieldValue('categoryCode', generateCategoryCode());
     }
   }, [id]);
 
@@ -78,7 +85,7 @@ export default function PatientCategoryForm() {
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <TextInput label="Category Name" withAsterisk {...form.getInputProps('categoryName')} />
-        <TextInput label="Category Code" withAsterisk {...form.getInputProps('categoryCode')} />
+        <TextInput label="Category Code" readOnly {...form.getInputProps('categoryCode')} />
         
         <NumberInput 
           label="Discount Percentage (%)" 
@@ -108,14 +115,14 @@ export default function PatientCategoryForm() {
             className="bg-[#202A44] text-white hover:bg-[#1a2236]"
             loading={loading}
           >
-            {isEdit ? 'Update' : 'Create'}
+            {isEdit ? 'Update' : 'Save'}
           </Button>
           <Button
             variant="subtle"
             onClick={() => navigate('/admin/mastersettings/patient-categories')}
             className="bg-[#202A44] text-white hover:bg-[#1a2236]"
           >
-            Back
+            Cancel
           </Button>
         </div>
       </form>

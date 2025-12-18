@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from '@mantine/form';
-import { Button, Select, Switch, TextInput, Textarea } from '@mantine/core';
+import { Button, MultiSelect, Switch, TextInput, Textarea } from '@mantine/core';
 import { motion } from 'framer-motion';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 import { CashCounterService } from '../../../Services/CashCounterService';
@@ -11,7 +11,7 @@ interface CashCounterFormData {
   description: string;
   systemName: string;
   tokenRequired: boolean;
-  counterType: string;
+  counterType: string[];
 }
 
 export default function CashCounterForm() {
@@ -26,11 +26,11 @@ export default function CashCounterForm() {
       description: '',
       systemName: '',
       tokenRequired: false,
-      counterType: '',
+      counterType: [],
     },
     validate: {
       counterName: (value) => (!value ? 'Counter name is required' : null),
-      counterType: (value) => (!value ? 'Counter type is required' : null),
+      counterType: (value) => (!value || value.length === 0 ? 'Counter type is required' : null),
     },
   });
 
@@ -59,7 +59,7 @@ export default function CashCounterForm() {
         description: counter.description || '',
         systemName: counter.systemName || '',
         tokenRequired: counter.tokenRequired || false,
-        counterType: counter.counterType || '',
+        counterType: counter.counterType ? counter.counterType.split(',') : [],
       });
     } catch {
       errorNotification('Failed to load cash counter');
@@ -72,16 +72,20 @@ export default function CashCounterForm() {
   const handleSubmit = async (values: CashCounterFormData) => {
     try {
       setLoading(true);
+      const payload = {
+        ...values,
+        counterType: values.counterType.join(',')
+      };
       if (isEdit) {
-        await CashCounterService.updateCashCounter(Number(id), values);
+        await CashCounterService.updateCashCounter(Number(id), payload);
         successNotification('Cash counter updated successfully!');
       } else {
-        await CashCounterService.createCashCounter(values);
+        await CashCounterService.createCashCounter(payload);
         successNotification('Cash counter created successfully!');
       }
       navigate('/admin/mastersettings/cash-counters');
-    } catch {
-      errorNotification(`Failed to ${isEdit ? 'update' : 'create'} cash counter`);
+    } catch (error) {
+      errorNotification(`Failed to ${isEdit ? 'update' : 'create'} cash counter: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
@@ -107,9 +111,9 @@ export default function CashCounterForm() {
             {...form.getInputProps('counterName')}
           />
 
-          <Select
+          <MultiSelect
             label="Counter Type"
-            placeholder="Select counter type"
+            placeholder="Select counter types"
             data={counterTypes}
             withAsterisk
             {...form.getInputProps('counterType')}
@@ -140,14 +144,14 @@ export default function CashCounterForm() {
 
           <div className="xl:col-span-2 flex flex-wrap justify-end gap-2 mt-4">
             <Button type="submit" loading={loading} className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-              {isEdit ? 'Update' : 'Create'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="subtle"
               onClick={() => navigate('/admin/mastersettings/cash-counters')}
               className="bg-[#202A44] text-white hover:bg-[#1a2236]"
             >
-              Back
+              Cancel
             </Button>
           </div>
         </form>

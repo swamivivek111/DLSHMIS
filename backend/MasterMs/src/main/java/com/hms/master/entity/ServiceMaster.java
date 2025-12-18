@@ -144,9 +144,7 @@ public class ServiceMaster {
     @Column(name = "is_doctor_share_required")
     private Boolean isDoctorShareRequired = false;
     
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private Status status = Status.Active;
+
     
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -154,9 +152,7 @@ public class ServiceMaster {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
-    public enum Status {
-        Active, Inactive
-    }
+
     
     @PrePersist
     public void prePersist() {

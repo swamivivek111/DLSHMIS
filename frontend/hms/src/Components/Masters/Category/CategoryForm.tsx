@@ -17,25 +17,15 @@ export default function CategoryForm() {
       categoryName: '',
       categoryCode: '',
       description: '',
-      categoryType: '',
       isActive: true,
     },
     validate: {
       categoryName: v => (v.length < 2 ? 'Category name is required' : null),
-      categoryType: v => (!v ? 'Category type is required' : null),
+      categoryCode: v => (v.length < 1 ? 'Category code is required' : null),
     },
   });
 
-  const categoryTypes = [
-    { value: 'MEDICAL', label: 'Medical' },
-    { value: 'ADMINISTRATIVE', label: 'Administrative' },
-    { value: 'BILLING', label: 'Billing' },
-    { value: 'DIAGNOSTIC', label: 'Diagnostic' },
-    { value: 'TREATMENT', label: 'Treatment' },
-    { value: 'PHARMACY', label: 'Pharmacy' },
-    { value: 'LABORATORY', label: 'Laboratory' },
-    { value: 'RADIOLOGY', label: 'Radiology' },
-  ];
+
 
   useEffect(() => {
     if (isEdit && id) {
@@ -83,16 +73,8 @@ export default function CategoryForm() {
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <TextInput label="Category Name" withAsterisk {...form.getInputProps('categoryName')} />
-          <TextInput label="Category Code" {...form.getInputProps('categoryCode')} />
+          <TextInput label="Category Code" withAsterisk {...form.getInputProps('categoryCode')} />
           
-          <Select
-            label="Category Type"
-            placeholder="Select category type"
-            data={categoryTypes}
-            withAsterisk
-            {...form.getInputProps('categoryType')}
-          />
-
           <Textarea label="Description" {...form.getInputProps('description')} className="xl:col-span-2" />
           
           <div className="flex items-center xl:justify-end">
@@ -114,7 +96,7 @@ export default function CategoryForm() {
               onClick={() => navigate('/admin/mastersettings/categories')}
               className="bg-[#202A44] text-white hover:bg-[#1a2236]"
             >
-              Back
+              Cancel
             </Button>
           </div>
         </form>

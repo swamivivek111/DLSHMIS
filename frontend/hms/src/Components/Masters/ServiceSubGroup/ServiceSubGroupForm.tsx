@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Button, Container, Paper, Select, TextInput, Title } from '@mantine/core';
 import { errorNotification, successNotification } from '../../../Utility/NotificationUtil';
 import { ServiceSubGroupService } from '../../../Services/ServiceSubGroupService';
-import { WardGroupService } from '../../../Services/WardGroupService';
+import { ServiceGroupService } from '../../../Services/ServiceGroupService';
 
 interface ServiceSubGroupFormData {
   groupId: string;
@@ -17,7 +17,7 @@ export default function ServiceSubGroupForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [wardGroups, setWardGroups] = useState<any[]>([]);
+  const [serviceGroups, setServiceGroups] = useState<any[]>([]);
   const isEdit = Boolean(id);
 
   const form = useForm<ServiceSubGroupFormData>({
@@ -39,22 +39,22 @@ export default function ServiceSubGroupForm() {
   ];
 
   useEffect(() => {
-    loadWardGroups();
+    loadServiceGroups();
     if (isEdit && id) {
       loadServiceSubGroup();
     }
   }, [id, isEdit]);
 
-  const loadWardGroups = async () => {
+  const loadServiceGroups = async () => {
     try {
-      const response = await WardGroupService.getAllWardGroups();
+      const response = await ServiceGroupService.getAllServiceGroups();
       const groupOptions = response.map((group: any) => ({
-        value: group.wardGroupId.toString(),
-        label: group.wardGroupName
+        value: group.groupId.toString(),
+        label: group.groupName
       }));
-      setWardGroups(groupOptions);
+      setServiceGroups(groupOptions);
     } catch {
-      errorNotification('Failed to load ward groups');
+      errorNotification('Failed to load service groups');
     }
   };
 
@@ -91,8 +91,9 @@ export default function ServiceSubGroupForm() {
         successNotification('Service sub group created successfully!');
       }
       navigate('/admin/mastersettings/service-sub-groups');
-    } catch {
-      errorNotification(`Failed to ${isEdit ? 'update' : 'create'} service sub group`);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.errorMessage || error.response?.data?.message || error.message || `Failed to ${isEdit ? 'update' : 'create'} service sub group`;
+      errorNotification(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -114,7 +115,7 @@ export default function ServiceSubGroupForm() {
           <Select
             label="Group"
             placeholder="Select group"
-            data={wardGroups}
+            data={serviceGroups}
             withAsterisk
             searchable
             {...form.getInputProps('groupId')}
@@ -135,14 +136,14 @@ export default function ServiceSubGroupForm() {
 
           <div className="xl:col-span-2 flex flex-wrap justify-end gap-2 mt-4">
             <Button type="submit" loading={loading} className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-              {isEdit ? 'Update' : 'Create'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="subtle"
               onClick={() => navigate('/admin/mastersettings/service-sub-groups')}
               className="bg-[#202A44] text-white hover:bg-[#1a2236]"
             >
-              Back
+              Cancel
             </Button>
           </div>
         </form>

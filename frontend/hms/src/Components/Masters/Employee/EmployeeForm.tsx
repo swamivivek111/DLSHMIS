@@ -49,7 +49,6 @@ export default function EmployeeForm() {
       firstName: v => (v.length < 2 ? ' First Name is required' : null),
       middleName: v => (v.length < 2 ? ' Middle Name is required' : null),
       lastName: v => (v.length < 2 ? ' Last Name is required' : null),
-      employeeCode: v => (v.length < 1 ? 'Employee Code is required' : null),
       emailId: v => (!v ? 'Email is required' : !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v) ? 'Invalid email' : null),
       mobileNo: v => (!v ? 'Mobile number is required' : !/^\d{10}$/.test(v) ? 'Invalid number' : null),
     },
@@ -65,6 +64,12 @@ export default function EmployeeForm() {
   const [filteredCities, setFilteredCities] = useState<{ value: string; label: string }[]>([]);
 
   const [loading, setLoading]=useState(false);
+
+  const generateEmployeeCode = () => {
+    const timestamp = Date.now().toString().slice(-6);
+    return `EMP${timestamp}`;
+  };
+
   useEffect(() => {
     const loadAllData = async () => {
       try {
@@ -80,6 +85,9 @@ export default function EmployeeForm() {
         // Load employee data after master data is loaded (for edit mode)
         if (isEdit && id) {
           setTimeout(() => loadEmployeeData(), 200);
+        } else {
+          // Auto-generate employee code for new employees
+          form.setFieldValue('employeeCode', generateEmployeeCode());
         }
       } catch (error) {
         console.error('Error loading master data:', error);
@@ -383,7 +391,7 @@ export default function EmployeeForm() {
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 xl:grid-cols-2 gap-4">
         <TextInput label="Employee Id" withAsterisk {...form.getInputProps('employeeId')} />
-        <TextInput label="Employee Code" withAsterisk {...form.getInputProps('employeeCode')} />
+        <TextInput label="Employee Code" readOnly {...form.getInputProps('employeeCode')} />
         <Select
           label="Title"
           placeholder="Select title"
@@ -513,14 +521,14 @@ export default function EmployeeForm() {
 
         <div className="xl:col-span-2 flex flex-wrap justify-end gap-2 mt-4">
           <Button type="submit" className="bg-[#202A44] text-white hover:bg-[#1a2236]">
-            {isEdit ? 'Update' : 'Create'}
+            {isEdit ? 'Update' : 'Save'}
           </Button>
           <Button
             variant="subtle"
             onClick={() => navigate('/admin/mastersettings/employees')}
             className="bg-[#202A44] text-white hover:bg-[#1a2236]"
           >
-            Back
+            Cancel
           </Button>
         </div>
       </form>

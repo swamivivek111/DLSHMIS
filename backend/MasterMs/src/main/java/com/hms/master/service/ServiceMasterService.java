@@ -83,7 +83,6 @@ public class ServiceMasterService {
         serviceMaster.setIsDoctorRequired(serviceMasterDetails.getIsDoctorRequired());
         serviceMaster.setIsTreatmentRoom(serviceMasterDetails.getIsTreatmentRoom());
         serviceMaster.setIsDoctorShareRequired(serviceMasterDetails.getIsDoctorShareRequired());
-        serviceMaster.setStatus(serviceMasterDetails.getStatus());
         
         return repository.save(serviceMaster);
     }
@@ -91,7 +90,7 @@ public class ServiceMasterService {
     public void deleteService(Long id) {
         ServiceMaster serviceMaster = repository.findById(id)
             .orElseThrow(() -> new RuntimeException("Service not found"));
-        serviceMaster.setStatus(ServiceMaster.Status.Inactive);
+        serviceMaster.setIsActive(false);
         repository.save(serviceMaster);
     }
     

@@ -22,13 +22,18 @@ public class TariffServiceMappingService {
     }
     
     public TariffServiceMapping createTariffServiceMapping(TariffServiceMapping tariffServiceMapping) {
-        return repository.save(tariffServiceMapping);
+        try {
+            return repository.save(tariffServiceMapping);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create tariff service mapping: " + e.getMessage(), e);
+        }
     }
     
     public TariffServiceMapping updateTariffServiceMapping(Long id, TariffServiceMapping tariffServiceMappingDetails) {
         TariffServiceMapping tariffServiceMapping = repository.findById(id)
             .orElseThrow(() -> new RuntimeException("Tariff service mapping not found"));
         
+        tariffServiceMapping.setDefaultTariffName(tariffServiceMappingDetails.getDefaultTariffName());
         tariffServiceMapping.setCompanyTariffCategoryId(tariffServiceMappingDetails.getCompanyTariffCategoryId());
         tariffServiceMapping.setGetServices(tariffServiceMappingDetails.getGetServices());
         tariffServiceMapping.setServiceId(tariffServiceMappingDetails.getServiceId());

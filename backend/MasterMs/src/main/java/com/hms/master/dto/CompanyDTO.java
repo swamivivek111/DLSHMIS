@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.hms.master.entity.Company;
-import com.hms.master.entity.Company.CompanyType;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +17,7 @@ public class CompanyDTO {
     private Long companyId;
     private String companyCode;
     private String companyName;
-    private CompanyType companyType;
+    private String companyType;
     private String address;
     private String email;
     private String phone;

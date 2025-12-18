@@ -377,7 +377,7 @@ const BedForm: React.FC = () => {
               size="md"
               variant="outline"
             >
-              {isEdit ? 'Update Bed' : 'Create Bed'}
+              {isEdit ? 'Update' : 'Save'}
             </Button>
             <Button
               variant="outline"

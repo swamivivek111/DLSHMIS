@@ -29,9 +29,8 @@ public class CashCounter {
     @Column(name = "token_required", nullable = false)
     private Boolean tokenRequired = false;
     
-    @Enumerated(EnumType.STRING)
     @Column(name = "counter_type", nullable = false)
-    private CounterType counterType;
+    private String counterType;
     
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -54,7 +53,5 @@ public class CashCounter {
         this.updatedAt = LocalDateTime.now();
     }
     
-    public enum CounterType {
-        OPD_BILLING, IPD_BILLING, RECEPTION, OPD_PHARMACY, PATHOLOGY, RADIOLOGY
-    }
+
 }

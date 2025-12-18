@@ -1098,3 +1098,80 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `patient_category`
+--
+
+CREATE TABLE `patient_category` (
+  `category_id` bigint(20) NOT NULL,
+  `category_code` varchar(50) DEFAULT NULL,
+  `category_name` varchar(100) NOT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `discount_percentage` double DEFAULT NULL,
+  `is_active` bit(1) NOT NULL DEFAULT b'1',
+  `created_at` datetime(6) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `patient_category`
+--
+
+INSERT INTO `patient_category` (`category_id`, `category_code`, `category_name`, `description`, `discount_percentage`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'GEN001', 'General', 'General patients without any special category', 0, b'1', '2025-11-29 15:00:00.000000', '2025-11-29 15:00:00.000000'),
+(2, 'SEN001', 'Senior Citizen', 'Patients above 60 years of age', 10, b'1', '2025-11-29 15:00:00.000000', '2025-11-29 15:00:00.000000'),
+(3, 'EMP001', 'Employee', 'Hospital employees and their families', 15, b'1', '2025-11-29 15:00:00.000000', '2025-11-29 15:00:00.000000');
+
+--
+-- Indexes for table `patient_category`
+--
+ALTER TABLE `patient_category`
+  ADD PRIMARY KEY (`category_id`),
+  ADD UNIQUE KEY `UK_category_name` (`category_name`);
+
+--
+-- AUTO_INCREMENT for table `patient_category`
+--
+ALTER TABLE `patient_category`
+  MODIFY `category_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;A L T E R   T A B L E   s e r v i c e _ m a s t e r   D R O P   C O L U M N   s t a t u s ;    
+ 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tariff_service_mapping`
+--
+
+CREATE TABLE `tariff_service_mapping` (
+  `id` bigint(20) NOT NULL,
+  `default_tariff_name` varchar(50) NOT NULL,
+  `company_tariff_category_id` bigint(20) DEFAULT NULL,
+  `get_services` varchar(20) DEFAULT 'GET',
+  `service_id` bigint(20) NOT NULL,
+  `service_name` varchar(150) DEFAULT NULL,
+  `corporate_service_name` varchar(150) DEFAULT NULL,
+  `qty` varchar(50) DEFAULT NULL,
+  `base_rate` decimal(10,2) DEFAULT NULL,
+  `company_tariff_rate` decimal(10,2) DEFAULT NULL,
+  `discount_perc` decimal(5,2) DEFAULT NULL,
+  `discount_amount` decimal(10,2) DEFAULT NULL,
+  `is_active` bit(1) NOT NULL DEFAULT b'1',
+  `created_by` bigint(20) DEFAULT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_by` bigint(20) DEFAULT NULL,
+  `updated_at` datetime(6) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for table `tariff_service_mapping`
+--
+ALTER TABLE `tariff_service_mapping`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for table `tariff_service_mapping`
+--
+ALTER TABLE `tariff_service_mapping`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;

@@ -62,7 +62,7 @@ public class CategoryAPI {
             category.setCategoryName(categoryDetails.getCategoryName());
             category.setCategoryCode(categoryDetails.getCategoryCode());
             category.setDescription(categoryDetails.getDescription());
-            category.setCategoryType(categoryDetails.getCategoryType());
+
             category.setIsActive(categoryDetails.getIsActive());
             
             Category updatedCategory = categoryRepository.save(category);

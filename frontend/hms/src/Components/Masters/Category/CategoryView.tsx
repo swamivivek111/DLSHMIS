@@ -10,7 +10,6 @@ interface Category {
   categoryName: string;
   categoryCode: string;
   description: string;
-  categoryType: string;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -54,14 +53,7 @@ export default function CategoryView() {
               <strong>Category Code:</strong> {category.categoryCode || 'N/A'}
             </Text>
           </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 6 }}>
-            <Text>
-              <strong>Category Type:</strong>{' '}
-              <Badge variant="light" color="blue">
-                {category.categoryType}
-              </Badge>
-            </Text>
-          </Grid.Col>
+
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <Text>
               <strong>Status:</strong>{' '}

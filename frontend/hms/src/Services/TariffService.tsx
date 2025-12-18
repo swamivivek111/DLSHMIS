@@ -24,5 +24,10 @@ export const TariffService = {
   deleteTariff: async (id: number) => {
     const response = await axiosInstance.delete(`/master/tariffs/${id}`);
     return response.data;
+  },
+
+  getNextTariffCode: async () => {
+    const response = await axiosInstance.get('/master/tariffs/next-code');
+    return response.data;
   }
 };

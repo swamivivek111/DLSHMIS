@@ -1,6 +1,0 @@
-com\hms\inventory\repository\MedicineRepository.class
-com\hms\inventory\config\SecurityConfig.class
-com\hms\inventory\InventoryMsApplication.class
-com\hms\inventory\api\InventoryAPI.class
-com\hms\inventory\entity\Medicine$MedicineStatus.class
-com\hms\inventory\entity\Medicine.class

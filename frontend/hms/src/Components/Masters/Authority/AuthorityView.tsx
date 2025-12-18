@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Text, Grid, Badge } from '@mantine/core';
+import { Button, Text, Grid, Badge, Table } from '@mantine/core';
 import { Authority } from '../../Types/Authority';
 import { getAuthorityById } from '../../../Services/AuthorityServices';
 import { errorNotification } from '../../../Utility/NotificationUtil';
@@ -44,11 +44,7 @@ export default function AuthorityView() {
               <strong>Authority Code:</strong> {authority.authorityCode}
             </Text>
           </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 6 }}>
-            <Text>
-              <strong>Approval Limit:</strong> {authority.approvalLimit || 'N/A'}
-            </Text>
-          </Grid.Col>
+
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <Text>
               <strong>Status:</strong>{' '}
@@ -68,6 +64,43 @@ export default function AuthorityView() {
             </Text>
           </Grid.Col>
         </Grid>
+
+        {authority.transactions && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-4">Transaction Permissions</h3>
+            <Table striped highlightOnHover>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Transaction Type</Table.Th>
+                  <Table.Th>Discount %</Table.Th>
+                  <Table.Th>Due %</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {(() => {
+                  try {
+                    const transactions = typeof authority.transactions === 'string' 
+                      ? JSON.parse(authority.transactions) 
+                      : authority.transactions;
+                    return transactions.map((transaction: any, index: number) => (
+                      <Table.Tr key={index}>
+                        <Table.Td>{transaction.type}</Table.Td>
+                        <Table.Td>{transaction.discountPercent}%</Table.Td>
+                        <Table.Td>{transaction.duePercent}%</Table.Td>
+                      </Table.Tr>
+                    ));
+                  } catch {
+                    return (
+                      <Table.Tr>
+                        <Table.Td colSpan={3}>No transaction permissions configured</Table.Td>
+                      </Table.Tr>
+                    );
+                  }
+                })()}
+              </Table.Tbody>
+            </Table>
+          </div>
+        )}
 
         <Button
           variant="filled"
